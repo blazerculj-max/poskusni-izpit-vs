@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Poskusni izpit VS</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Inter:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: start screen (exam + practice by sklop), then a sticky bar with one question card at a time and a question map; results replace the run */
+:root{
+  --bg:#f2f6f7; --card:#ffffff; --ink:#122126; --muted:#55686e; --line:#d2dde0;
+  --accent:#0c6870; --accent-2:#3b7db5; --soft:#e1eef0; --sel:#d6ebed; --on-accent:#ffffff;
+  --good:#1b7647; --good-soft:#e2f2e9; --bad:#b42318; --bad-soft:#fbe6e3; --warn:#94580a; --warn-soft:#fbefd9;
+  --f-head:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1518; --card:#132025; --ink:#e2ebed; --muted:#97aab0; --line:#28393f;
+    --accent:#4dbfc7; --accent-2:#80b2e2; --soft:#17333a; --sel:#173b42; --on-accent:#061a1d;
+    --good:#62d097; --good-soft:#15321f; --bad:#ff9186; --bad-soft:#3b1c19; --warn:#f2b552; --warn-soft:#352812;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1518; --card:#132025; --ink:#e2ebed; --muted:#97aab0; --line:#28393f;
+  --accent:#4dbfc7; --accent-2:#80b2e2; --soft:#17333a; --sel:#173b42; --on-accent:#061a1d;
+  --good:#62d097; --good-soft:#15321f; --bad:#ff9186; --bad-soft:#3b1c19; --warn:#f2b552; --warn-soft:#352812;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+h1,h2,h3{font-family:var(--f-head);line-height:1.2;margin:0;text-wrap:balance}
+p{margin:0}
+.wrap{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 64px;display:grid;gap:18px}
+.muted{color:var(--muted)}
+.eyebrow{font-family:var(--f-mono);font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px clamp(16px,3vw,24px)}
+.chip{font-family:var(--f-mono);font-size:.78rem;font-weight:600;background:var(--ink);color:var(--bg);padding:3px 9px;border-radius:5px;white-space:nowrap}
+
+.btn{font:inherit;font-weight:600;padding:10px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.lg{padding:14px 26px;font-size:1.05rem}
+button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
+
+/* start */
+.hero{display:grid;gap:14px;padding-block:8px 6px}
+.hero h1{font-size:clamp(2.1rem,6vw,3.2rem);font-weight:800;letter-spacing:-.01em}
+.lead{font-size:1.06rem;color:var(--muted);max-width:62ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.tile b{display:block;font-family:var(--f-head);font-size:1.7rem;font-weight:800;color:var(--accent);line-height:1.1}
+.tile span{font-size:.88rem;color:var(--muted)}
+.dist{display:flex;gap:3px;height:44px;border-radius:9px;overflow:hidden}
+.dist span{display:flex;flex-direction:column;justify-content:center;align-items:center;background:var(--accent);color:var(--on-accent);font-family:var(--f-mono);font-size:.76rem;line-height:1.15;min-width:0}
+.dist span:nth-child(n+4){background:var(--accent-2)}
+.rules h2{font-size:1.15rem;margin-bottom:10px}
+.rules ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.sample{display:grid;gap:8px;font-size:.94rem}
+.sample .eyebrow{margin-bottom:2px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding-top:4px}
+
+/* bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar-in{max-width:920px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar-q{font-family:var(--f-head);font-size:1.1rem;white-space:nowrap}
+.bar-q b{font-size:1.35rem}
+.prog{flex:1 1 120px;height:8px;background:var(--line);border-radius:99px;overflow:hidden;min-width:80px}
+.prog div{height:100%;background:var(--accent);border-radius:99px;transition:width .25s}
+.ans-count{font-family:var(--f-mono);font-size:.85rem;white-space:nowrap}
+.timer{font-family:var(--f-mono);font-weight:600;font-size:1.15rem;font-variant-numeric:tabular-nums;padding:6px 12px;border-radius:9px;background:var(--card);border:1px solid var(--line)}
+.timer.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.timer.crit{background:var(--bad-soft);color:var(--bad);border-color:transparent;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.6}}
+
+/* question */
+.qcard{display:grid;gap:16px}
+.qmeta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}
+.qmeta .muted{font-size:.9rem}
+.flag{margin-left:auto;font:inherit;font-size:.85rem;font-weight:600;padding:6px 11px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer}
+.flag.on{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.qtext{font-size:clamp(1.12rem,2.4vw,1.32rem);font-weight:800;line-height:1.35}
+.qtext strong{color:var(--bad);font-weight:800}
+.stmts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.stmts li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:10px;background:var(--soft)}
+.sn{font-family:var(--f-mono);font-weight:600;font-size:.85rem;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:var(--card);color:var(--accent);border:1px solid var(--line)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:8px}
+.opt{font:inherit;color:var(--ink);text-align:left;display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:center;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;background:var(--card);cursor:pointer;transition:border-color .15s,background .15s}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt[aria-checked="true"]{border-color:var(--accent);background:var(--sel)}
+.let{font-family:var(--f-mono);font-weight:600;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--line);font-size:.88rem}
+.opt[aria-checked="true"] .let{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.single .opts{grid-template-columns:1fr}
+.navrow{display:flex;justify-content:space-between;gap:10px}
+
+/* map */
+.map{display:grid;gap:10px}
+.map-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px}
+.map-head h3{font-size:1rem}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.legend .l-ans{background:var(--sel);border-color:var(--accent)}
+.legend .l-flag{background:var(--warn-soft);border-color:var(--warn)}
+.legend .l-cur{background:var(--card);border:2px solid var(--ink)}
+.grow{display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center}
+.gl{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+.cells{display:flex;flex-wrap:wrap;gap:6px}
+.cell{font:inherit;font-family:var(--f-mono);font-size:.8rem;width:36px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.cell.ans{background:var(--sel);border-color:var(--accent)}
+.cell.flag{background:var(--warn-soft);border-color:var(--warn)}
+.cell.cur{outline:2px solid var(--ink);outline-offset:1px}
+
+/* confirm */
+.overlay{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 45%,transparent);padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.cf{max-width:440px;width:100%;display:grid;gap:12px}
+.cf-act{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+
+/* results */
+.res-hero{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center}
+.ring svg{width:150px;height:150px;display:block}
+.r-bg{fill:none;stroke:var(--line);stroke-width:11}
+.r-fg{fill:none;stroke-width:11;stroke-linecap:round}
+.r-fg.ok{stroke:var(--good)} .r-fg.bad{stroke:var(--bad)}
+.r-num{font-family:var(--f-head);font-weight:800;font-size:34px;fill:var(--ink)}
+.r-sub{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+.res-txt{display:grid;gap:8px;min-width:0}
+.res-txt h1{font-size:clamp(2rem,6vw,2.8rem);font-weight:800}
+.pill{justify-self:start;font-family:var(--f-mono);font-weight:600;font-size:.82rem;padding:4px 11px;border-radius:99px}
+.pill.ok{background:var(--good-soft);color:var(--good)} .pill.bad{background:var(--bad-soft);color:var(--bad)}
+@media (max-width:520px){.res-hero{grid-template-columns:1fr;justify-items:center;text-align:center}.pill{justify-self:center}.ring svg{width:130px;height:130px}}
+.sk h2,.review h2{font-size:1.15rem}
+.skrows{display:grid;gap:10px;margin-top:12px}
+.skrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(90px,1.2fr) auto;gap:12px;align-items:center;font-size:.94rem}
+.skn{min-width:0}
+.skbar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.skbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.sks{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.skrow.zero .sks,.skrow.zero .skn b{color:var(--bad)}
+@media (max-width:520px){.skrow{grid-template-columns:1fr auto}.skbar{grid-column:1/-1;order:3}}
+.review{display:grid;gap:12px}
+.rev-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:inherit;font-size:.85rem;font-weight:600;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.rev{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px clamp(14px,3vw,22px);display:grid;gap:12px}
+.rev-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rnum{font-family:var(--f-head);font-weight:800;font-size:1.1rem}
+.rres{margin-left:auto;font-family:var(--f-mono);font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:99px}
+.rev.ok .rres{background:var(--good-soft);color:var(--good)}
+.rev.bad .rres{background:var(--bad-soft);color:var(--bad)}
+.rev.skip .rres{background:var(--warn-soft);color:var(--warn)}
+.qtext.sm{font-size:1.02rem}
+.rst,.ropt{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.93rem}
+.rst li{display:grid;grid-template-columns:auto 26px 1fr;gap:8px;align-items:start}
+.tag{font-family:var(--f-mono);font-size:.72rem;font-weight:600;padding:3px 7px;border-radius:5px;white-space:nowrap;min-width:72px;text-align:center}
+.tag.t{background:var(--sel);color:var(--accent)}
+.tag.f{background:var(--soft);color:var(--muted)}
+.rst .sn{width:22px;height:22px;font-size:.75rem}
+.ropt li{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:7px 10px;border-radius:9px;border:1px solid var(--line)}
+.ropt .let{width:24px;height:24px;font-size:.78rem}
+.ropt li.cor{background:var(--good-soft);border-color:transparent}
+.ropt li.cor .let{background:var(--good);color:var(--card);border-color:var(--good)}
+.ropt li.wrong{background:var(--bad-soft);border-color:transparent}
+.ropt li.wrong .let{background:var(--bad);color:var(--card);border-color:var(--bad)}
+.ropt em{font-style:normal;font-family:var(--f-mono);font-size:.72rem;color:var(--muted);white-space:nowrap}
+.ex{font-size:.92rem;background:var(--soft);border-radius:9px;padding:10px 12px}
+.ex::before{content:"Pojasnilo";font-family:var(--f-mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-right:8px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* practice */
+.sm{font-size:.92rem}
+.modes{display:grid;gap:14px}
+.modes h2{font-size:1.15rem}
+.mode-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px}
+.mode-head p{margin-top:4px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;flex:none}
+.seg button{font:inherit;font-size:.85rem;font-weight:600;padding:6px 13px;border:0;background:var(--card);color:var(--ink);cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.skgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,255px),1fr));gap:8px}
+.skbtn{font:inherit;color:var(--ink);text-align:left;display:grid;gap:7px;align-content:start;padding:12px 14px;border:1.5px solid var(--line);border-radius:11px;background:var(--card);cursor:pointer;transition:border-color .15s}
+.skbtn:hover:not(:disabled){border-color:var(--accent)}
+.skbtn:disabled{opacity:.5;cursor:default}
+.skbtn .t{display:flex;gap:9px;align-items:baseline;font-weight:600;line-height:1.3}
+.skbtn .t b{font-family:var(--f-mono);font-size:.85rem;color:var(--accent);flex:none}
+.skbtn .m{font-size:.82rem;color:var(--muted)}
+.skbtn.miss{background:var(--soft);border-style:dashed}
+.mini{display:block;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.mini i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.reset-row{display:flex;justify-content:flex-end}
+.linkbtn{font:inherit;font-size:.85rem;background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:4px 2px}
+.linkbtn:disabled{opacity:.5;cursor:default;text-decoration:none}
+.opt.cor{border-color:var(--good);background:var(--good-soft)}
+.opt.cor .let{background:var(--good);border-color:var(--good);color:var(--card)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .let{background:var(--bad);border-color:var(--bad);color:var(--card)}
+.stmts li.fb{grid-template-columns:30px 1fr auto}
+.stmts .tag{align-self:center}
+.fbk{font-family:var(--f-mono);font-weight:600;font-size:.88rem;padding:9px 12px;border-radius:9px}
+.fbk.ok{background:var(--good-soft);color:var(--good)}
+.fbk.bad{background:var(--bad-soft);color:var(--bad)}
+.cell.ok{background:var(--good-soft);border-color:var(--good)}
+.cell.bad{background:var(--bad-soft);border-color:var(--bad)}
+.legend .l-ok{background:var(--good-soft);border-color:var(--good)}
+.legend .l-bad{background:var(--bad-soft);border-color:var(--bad)}
+.pill.info{background:var(--sel);color:var(--accent)}
+@media (max-width:520px){.stmts li.fb{grid-template-columns:30px 1fr}.stmts li.fb .tag{grid-column:2;justify-self:start}}
+/* login */
+.login-wrap{min-height:100vh;min-height:100dvh;align-content:center}
+.login{max-width:420px;width:100%;margin:0 auto;display:grid;gap:10px;padding:26px clamp(18px,4vw,30px)}
+.login h1{font-size:clamp(1.9rem,6vw,2.5rem);font-weight:800}
+.lg-form{display:grid;gap:12px;margin-top:8px}
+.fld{display:grid;gap:5px;font-size:.88rem;font-weight:600}
+.fld input{font:inherit;font-weight:400;font-size:1rem;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);width:100%}
+.fld input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--sel)}
+.lg-err{min-height:1.4em;color:var(--bad);font-size:.9rem;font-weight:600}
+.lg-form .btn{width:100%}
+.reset-row{gap:16px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const STORE = 'poskusni-izpit-vs-v2';
+const PSTORE = 'poskusni-izpit-vs-napredek-v1';
+const KSTORE = 'poskusni-izpit-vs-kljuc-v1';
+const DURATION = 60 * 60 * 1000;
+const PASS = 24;
+const LET = 'ABCDEFGH';
+const QUOTA = { 1:8, 2:8, 3:8, 4:4, 5:4, 6:4, 7:4 };
+const SK = {
+  1: 'Finančni sistem in produkti',
+  2: 'Izbor investicijskega sklada',
+  3: 'Investicijski skladi in DZU',
+  4: 'Trg finančnih instrumentov',
+  5: 'Preprečevanje pranja denarja',
+  6: 'Obdavčitev',
+  7: 'Etika in odnos do vlagateljev'
+};
+
+/* Combination answers: number arrays are sets of statements, '-2,5' = all except 2 and 5, 'all', 'none'.
+   The correct option is computed: the one whose set equals `truth`. */
+function rangeSet(n){ const s = new Set(); for (let i = 1; i <= n; i++) s.add(i); return s; }
+function specSet(spec, n){
+  if (Array.isArray(spec)) return new Set(spec);
+  if (spec === 'all') return rangeSet(n);
+  if (spec === 'none') return new Set();
+  const s = rangeSet(n); spec.slice(1).split(',').forEach(x => s.delete(Number(x))); return s;
+}
+function joinList(a){ if (a.length === 1) return String(a[0]); if (a.length === 2) return a[0] + ' in ' + a[1]; return a.slice(0, -1).join(', ') + ' in ' + a[a.length - 1]; }
+function specLabel(spec){
+  if (Array.isArray(spec)) return spec.length === 1 ? 'samo ' + spec[0] : joinList(spec);
+  if (spec === 'all') return 'vse';
+  if (spec === 'none') return 'nič od naštetega';
+  return 'vse razen ' + joinList(spec.slice(1).split(',').map(Number));
+}
+function eqSet(a, b){ if (a.size !== b.size) return false; for (const x of a) if (!b.has(x)) return false; return true; }
+function prep(q){
+  if (q.single) return Object.assign({}, q, { options: q.opts.map((t, k) => ({ text: t, correct: k === q.ans })) });
+  const n = q.st.length, truth = new Set(q.truth);
+  return Object.assign({}, q, { options: q.opts.map(spec => ({ text: specLabel(spec), correct: eqSet(specSet(spec, n), truth) })) });
+}
+
+let BANK = [], BY = {}, S = null, P = null, app = null;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+function fmtTime(ms){ ms = Math.max(0, ms); const t = Math.ceil(ms / 1000); const m = Math.floor(t / 60), s = t % 60; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); }
+function pct(x){ return (Math.round(x * 1000) / 10).toFixed(1).replace('.', ','); }
+function shuffle(n){ const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function mix(arr){ return shuffle(arr.length).map(i => arr[i]); }
+function tclass(rem){ return rem < 5 * 60000 ? 'crit' : rem < 10 * 60000 ? 'warn' : ''; }
+function toTop(){ try { window.scrollTo(0, 0); } catch (e) {} }
+const Q = i => BY[S.ids[i]];
+const isExam = () => S.mode === 'exam';
+function plural(n, one, two, few, many){ const m = n % 100; return m === 1 ? one : m === 2 ? two : (m === 3 || m === 4) ? few : many; }
+
+/* ---------- persistence ---------- */
+function freshP(){ return { seen:{}, miss:{}, plen:20 }; }
+function loadP(){
+  try {
+    const p = JSON.parse(localStorage.getItem(PSTORE));
+    if (p && typeof p.seen === 'object' && typeof p.miss === 'object') return Object.assign(freshP(), p);
+  } catch (e) {}
+  return freshP();
+}
+function saveP(){ try { localStorage.setItem(PSTORE, JSON.stringify(P)); } catch (e) {} }
+function blank(){
+  return { phase:'start', mode:'exam', pk:null, ids:[], perm:[], ans:[], flags:[], cur:0,
+           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false };
+}
+function load(){
+  try {
+    const s = JSON.parse(localStorage.getItem(STORE));
+    if (!s || !Array.isArray(s.ids)) return null;
+    if (s.phase !== 'start') {
+      if (!s.ids.length || !s.ids.every(id => BY[id])) return null;
+      if (!Array.isArray(s.perm) || s.perm.length !== s.ids.length) return null;
+      if (!s.perm.every((p, i) => Array.isArray(p) && p.length === BY[s.ids[i]].options.length)) return null;
+      if (!Array.isArray(s.ans) || s.ans.length !== s.ids.length) return null;
+    }
+    return Object.assign(blank(), s, { confirm:false, resetAsk:false });
+  } catch (e) { return null; }
+}
+function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (e) {} }
+
+/* ---------- drawing questions ---------- */
+function prioritized(pool){
+  return mix(pool.filter(q => !P.seen[q.id])).concat(mix(pool.filter(q => P.seen[q.id])));
+}
+function drawExam(){
+  const ids = [];
+  Object.keys(QUOTA).forEach(k => {
+    const pick = prioritized(BANK.filter(q => String(q.s) === k)).slice(0, QUOTA[k]);
+    mix(pick).forEach(q => ids.push(q.id));
+  });
+  return ids;
+}
+function drawPractice(pk){
+  if (pk === 'miss') {
+    const pool = BANK.filter(q => P.miss[q.id]);
+    const list = mix(pool).slice(0, P.plen || pool.length);
+    return list.sort((a, b) => a.s - b.s).map(q => q.id);
+  }
+  const list = prioritized(BANK.filter(q => String(q.s) === pk));
+  return list.slice(0, P.plen || list.length).map(q => q.id);
+}
+function begin(mode, pk){
+  const ids = mode === 'exam' ? drawExam() : drawPractice(pk);
+  if (!ids.length) { S = blank(); save(); render(); toTop(); return; }
+  S = blank(); S.mode = mode; S.pk = pk || null; S.phase = 'run'; S.ids = ids;
+  S.perm = ids.map(id => shuffle(BY[id].options.length));
+  S.ans = ids.map(() => null); S.flags = ids.map(() => false);
+  S.startedAt = Date.now(); S.endsAt = mode === 'exam' ? S.startedAt + DURATION : 0;
+  save(); render(); toTop();
+}
+function finish(timeout){
+  S.phase = 'result'; S.finishedAt = isExam() ? Math.min(Date.now(), S.endsAt) : Date.now();
+  S.timeout = !!timeout; S.confirm = false; S.filter = 'all';
+  if (isExam()) {
+    S.ids.forEach((id, i) => {
+      P.seen[id] = 1;
+      const a = S.ans[i];
+      if (a !== null && BY[id].options[a].correct) delete P.miss[id]; else P.miss[id] = 1;
+    });
+    saveP();
+  }
+  save(); render(); toTop();
+}
+function results(){
+  const per = {}; let ok = 0, n = 0;
+  if (isExam()) Object.keys(SK).forEach(k => per[k] = { ok:0, n:0 });
+  S.ids.forEach((id, i) => {
+    const q = BY[id], a = S.ans[i];
+    if (!isExam() && a === null) return;
+    per[q.s] = per[q.s] || { ok:0, n:0 }; per[q.s].n++; n++;
+    if (a !== null && q.options[a].correct) { ok++; per[q.s].ok++; }
+  });
+  const zero = Object.keys(per).filter(k => per[k].n && per[k].ok === 0);
+  return { ok, n, per, zero, pass: isExam() && ok >= PASS && zero.length === 0 };
+}
+function runTitle(){ return isExam() ? 'Poskusni izpit' : S.pk === 'miss' ? 'Vadba · zgrešena vprašanja' : 'Vadba · sklop ' + S.pk; }
+
+/* ---------- views ---------- */
+function viewStart(){
+  const total = BANK.length;
+  const seenAll = BANK.filter(q => P.seen[q.id]).length;
+  const missN = BANK.filter(q => P.miss[q.id]).length;
+  const cnt = {}; BANK.forEach(q => { cnt[q.s] = cnt[q.s] || { n:0, seen:0, miss:0 }; cnt[q.s].n++; if (P.seen[q.id]) cnt[q.s].seen++; if (P.miss[q.id]) cnt[q.s].miss++; });
+  const seg = [[10, '10'], [20, '20'], [0, 'vsa']];
+  let h = `<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">Izpit za trženje enot vzajemnih skladov · ATVP</p>
+    <h1>Poskusni izpit</h1>
+    <p class="lead">Banka <b>${total} vprašanj</b> iz gradiva vseh sedmih sklopov. Vsak poskus izbere 40 vprašanj po razporeditvi pravega izpita, najprej tista, ki jih še nisi videl. Najprej oštevilčene trditve, nato kombinirani odgovori, vmes klasična vprašanja in praktični primeri.</p>
+    <div class="tiles">
+      <div class="tile"><b>40</b><span>vprašanj v izpitu</span></div>
+      <div class="tile"><b>60:00</b><span>minut, čas teče sproti</span></div>
+      <div class="tile"><b>24</b><span>pravilnih za opravljen izpit (60 %)</span></div>
+      <div class="tile"><b>${seenAll}/${total}</b><span>vprašanj si že videl</span></div>
+    </div>
+    <div class="dist" aria-label="Razporeditev vprašanj po sklopih">
+      ${Object.keys(QUOTA).map(k => `<span style="flex:${QUOTA[k]}">S${k}<br>${QUOTA[k]}</span>`).join('')}
+    </div>
+  </section>
+  <div class="actions"><button class="btn primary lg" data-act="start">Začni izpit</button></div>
+  <section class="card modes">
+    <div class="mode-head"><div><h2>Vadba po sklopih</h2><p class="muted sm">Brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.</p></div>
+      <div class="seg" role="group" aria-label="Število vprašanj v vadbi">${seg.map(([v, t]) => `<button data-act="plen" data-v="${v}" aria-pressed="${P.plen === v}">${t}</button>`).join('')}</div></div>
+    <div class="skgrid">${Object.keys(SK).map(k => {
+      const c = cnt[k] || { n:0, seen:0, miss:0 };
+      return `<button class="skbtn" data-act="practice" data-pk="${k}" ${c.n ? '' : 'disabled'}>
+        <span class="t"><b>S${k}</b><span>${esc(SK[k])}</span></span>
+        <span class="mini" aria-hidden="true"><i style="width:${c.n ? c.seen / c.n * 100 : 0}%"></i></span>
+        <span class="m">${c.n} ${plural(c.n, 'vprašanje', 'vprašanji', 'vprašanja', 'vprašanj')} · videnih ${c.seen}${c.miss ? ' · zgrešenih ' + c.miss : ''}</span>
+      </button>`; }).join('')}
+      <button class="skbtn miss" data-act="practice" data-pk="miss" ${missN ? '' : 'disabled'}>
+        <span class="t"><b>↺</b><span>Zgrešena vprašanja</span></span>
+        <span class="m">${missN ? missN + ' ' + plural(missN, 'vprašanje čaka', 'vprašanji čakata', 'vprašanja čakajo', 'vprašanj čaka') + ' na ponovitev' : 'Tu se zberejo vprašanja, ki jih zgrešiš.'}</span>
+      </button>
+    </div>
+    <div class="reset-row"><button class="linkbtn" data-act="resetp" ${seenAll || missN ? '' : 'disabled'}>Ponastavi napredek</button><button class="linkbtn" data-act="logout">Odjava</button></div>
+  </section>
+  <section class="card rules">
+    <h2>Kako poteka</h2>
+    <ul>
+      <li>Pri vsakem vprašanju izbereš <b>en odgovor</b>: tistega, ki zajema vse pravilne trditve in nobene napačne.</li>
+      <li>Pri vprašanjih z <b>NE velja</b> izbereš trditve, ki ne veljajo.</li>
+      <li>Med vprašanji se lahko prosto premikaš in jih označiš za kasnejši pregled.</li>
+      <li>Ko čas poteče, se izpit odda samodejno. Napačno odgovorjena vprašanja se shranijo med zgrešena.</li>
+      <li>Ob vsakem poskusu se vrstni red odgovorov premeša.</li>
+      <li>Bližnjice: tipke A–H izberejo odgovor, puščici levo in desno premikata med vprašanji.</li>
+    </ul>
+  </section>
+  <section class="card sample">
+    <p class="eyebrow">Primer oblike vprašanja</p>
+    <p><b>Kaj velja za odlog ugotavljanja davčne obveznosti?</b></p>
+    <p class="muted">1. … 2. … 3. … 4. … 5. …</p>
+    <p class="muted">A) 1 in 2 · B) 1, 2 in 3 · C) vse · D) vse razen 4 · E) samo 5 · F) nič od naštetega</p>
+  </section>
+  </main>`;
+  if (S.resetAsk) h += `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="rs-t"><div class="card cf">
+    <h3 id="rs-t">Ponastavim napredek?</h3>
+    <p>Izbrisani bodo podatki o videnih in zgrešenih vprašanjih. Izpit bo spet najprej izbiral vsa vprašanja enakovredno.</p>
+    <div class="cf-act"><button class="btn" data-act="cancel">Prekliči</button><button class="btn primary" data-act="resetok">Ponastavi</button></div>
+  </div></div>`;
+  return h;
+}
+
+function viewRun(){
+  const i = S.cur, q = Q(i), perm = S.perm[i], N = S.ids.length;
+  const exam = isExam();
+  const a = S.ans[i], locked = !exam && a !== null;
+  const answered = S.ans.filter(x => x !== null).length;
+  const last = i === N - 1;
+  let right = '';
+  if (exam) {
+    const rem = S.endsAt - Date.now();
+    right = `<span class="ans-count muted">${answered}/${N} odgovorjenih</span>
+    <div id="timer" class="timer ${tclass(rem)}" role="timer" aria-label="Preostali čas">${fmtTime(rem)}</div>
+    <button class="btn primary" data-act="submit">Oddaj</button>`;
+  } else {
+    const ok = S.ids.filter((id, k) => S.ans[k] !== null && BY[id].options[S.ans[k]].correct).length;
+    right = `<span class="ans-count muted">${ok}/${answered} pravilnih</span>
+    <button class="btn" data-act="submit">Končaj</button>`;
+  }
+  let h = `<header class="bar"><div class="bar-in">
+    <div class="bar-q"><span class="eyebrow">${exam ? 'Vprašanje ' : (S.pk === 'miss' ? 'Zgrešena' : 'Vadba S' + esc(S.pk)) + ' · '}</span><b>${i + 1}</b><span class="muted"> / ${N}</span></div>
+    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${N}" aria-valuenow="${answered}" aria-label="Odgovorjena vprašanja"><div style="width:${answered / N * 100}%"></div></div>
+    ${right}
+  </div></header>
+  <main class="wrap">
+  <article class="card qcard ${q.single ? 'single' : ''}">
+    <div class="qmeta"><span class="chip">Sklop ${q.s}</span><span class="muted">${esc(SK[q.s])}</span>
+      ${exam ? `<button class="flag ${S.flags[i] ? 'on' : ''}" data-act="flag" aria-pressed="${S.flags[i]}">${S.flags[i] ? '★ Označeno za pregled' : '☆ Označi za pregled'}</button>` : ''}</div>
+    <h2 class="qtext">${q.q}</h2>`;
+  if (!q.single) {
+    const lab = q.lab || (q.neg ? ['ne velja', 'velja'] : ['drži', 'ne drži']), truth = new Set(q.truth || []);
+    h += `<ol class="stmts">${q.st.map((t, k) => {
+      const tag = locked ? `<span class="tag ${truth.has(k + 1) ? 't' : 'f'}">${truth.has(k + 1) ? lab[0] : lab[1]}</span>` : '';
+      return `<li class="${locked ? 'fb' : ''}"><span class="sn">${k + 1}</span><span>${esc(t)}</span>${tag}</li>`;
+    }).join('')}</ol>`;
+  }
+  h += `<div class="opts" role="radiogroup" aria-label="Odgovori">${perm.map((oi, pos) => {
+      const sel = a === oi, o = q.options[oi];
+      const cls = locked ? (o.correct ? ' cor' : sel ? ' wrong' : '') : '';
+      return `<button class="opt${cls}" role="radio" aria-checked="${sel}" data-act="select" data-o="${oi}" ${locked ? 'disabled' : ''}><span class="let">${LET[pos]}</span><span>${esc(o.text)}</span></button>`;
+    }).join('')}</div>`;
+  if (locked) {
+    const ok = q.options[a].correct;
+    const corPos = perm.findIndex(oi => q.options[oi].correct);
+    h += `<p class="fbk ${ok ? 'ok' : 'bad'}" role="status">${ok ? 'Pravilno.' : 'Napačno. Pravilen odgovor je ' + LET[corPos] + '.'}</p>`;
+    if (q.ex) h += `<p class="ex">${esc(q.ex)}</p>`;
+  }
+  h += `</article>
+  <div class="navrow">
+    <button class="btn" data-act="prev" ${i === 0 ? 'disabled' : ''}>← Prejšnje</button>
+    <button class="btn ${last ? 'primary' : ''}" data-act="${last ? 'submit' : 'next'}">${last ? (exam ? 'Oddaj izpit' : 'Zaključi vadbo') : 'Naslednje →'}</button>
+  </div>
+  ${viewMap()}
+  </main>`;
+  if (S.confirm) h += viewConfirm();
+  return h;
+}
+
+function viewMap(){
+  const exam = isExam();
+  let h = `<section class="card map"><div class="map-head"><h3>Pregled vprašanj</h3>
+    <div class="legend">${exam ? '<span><i class="l-ans"></i>odgovorjeno</span><span><i class="l-flag"></i>za pregled</span>' : '<span><i class="l-ok"></i>pravilno</span><span><i class="l-bad"></i>napačno</span>'}<span><i class="l-cur"></i>trenutno</span></div></div>`;
+  Object.keys(SK).forEach(k => {
+    const idx = []; S.ids.forEach((id, i) => { if (String(BY[id].s) === k) idx.push(i); });
+    if (!idx.length) return;
+    h += `<div class="grow"><span class="gl">S${k}</span><div class="cells">${idx.map(i => {
+      const a = S.ans[i];
+      let cls = '';
+      if (a !== null) cls = exam ? ' ans' : (Q(i).options[a].correct ? ' ok' : ' bad');
+      if (exam && S.flags[i]) cls += ' flag';
+      if (i === S.cur) cls += ' cur';
+      return `<button class="cell${cls}" data-act="go" data-q="${i}" aria-label="Vprašanje ${i + 1}${a !== null ? ', odgovorjeno' : ''}${exam && S.flags[i] ? ', označeno' : ''}">${i + 1}</button>`;
+    }).join('')}</div></div>`;
+  });
+  return h + `</section>`;
+}
+
+function viewConfirm(){
+  const un = S.ans.filter(a => a === null).length;
+  const fl = S.flags.filter(Boolean).length;
+  if (!isExam()) return `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="cf-t"><div class="card cf">
+    <h3 id="cf-t">Zaključiš vadbo?</h3>
+    <p>${un ? `Neodgovorjenih vprašanj: <b>${un}</b>. V rezultat se štejejo samo odgovorjena.` : 'Odgovoril si na vsa vprašanja.'}</p>
+    <div class="cf-act"><button class="btn" data-act="cancel">Nadaljuj</button><button class="btn primary" data-act="confirm">Zaključi</button></div>
+  </div></div>`;
+  return `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="cf-t"><div class="card cf">
+    <h3 id="cf-t">Oddaš izpit?</h3>
+    <p>${un ? `Neodgovorjenih vprašanj: <b>${un}</b>.` : 'Odgovoril si na vsa vprašanja.'}${fl ? ` Za pregled imaš označenih še <b>${fl}</b>.` : ''}</p>
+    <p class="muted">Po oddaji odgovorov ni več mogoče spreminjati.</p>
+    <div class="cf-act"><button class="btn" data-act="cancel">Nadaljuj z reševanjem</button><button class="btn primary" data-act="confirm">Oddaj izpit</button></div>
+  </div></div>`;
+}
+
+function viewResult(){
+  const exam = isExam(), r = results(), N = S.ids.length;
+  const n = r.n || 1;
+  const used = exam ? Math.max(0, Math.min(DURATION, S.finishedAt - S.startedAt)) : Math.max(0, S.finishedAt - S.startedAt);
+  const C = 2 * Math.PI * 52, frac = r.ok / n;
+  const good = exam ? r.pass : frac >= 0.6;
+  const wrong = S.ids.filter((id, i) => S.ans[i] !== null && !BY[id].options[S.ans[i]].correct).length;
+  const skip = S.ans.filter(a => a === null).length;
+  let txt = '';
+  if (exam) {
+    const reasons = [];
+    if (r.pass) reasons.push('Presegel si prag 24 pravilnih odgovorov (60 %) in v vsakem sklopu imaš vsaj en pravilen odgovor.');
+    else {
+      if (r.ok < PASS) reasons.push(`Do praga 24 pravilnih odgovorov ti manjka še ${PASS - r.ok}.`);
+      if (r.zero.length) reasons.push(`Brez pravilnega odgovora ${r.zero.length > 1 ? 'so ostali sklopi' : 'je ostal sklop'} ${joinList(r.zero)}.`);
+    }
+    txt = reasons.join(' ');
+  } else {
+    txt = r.n ? `Pravilno si odgovoril na ${r.ok} od ${r.n} ${plural(r.n, 'vprašanja', 'vprašanj', 'vprašanj', 'vprašanj')}.` : 'Nisi odgovoril na nobeno vprašanje.';
+  }
+  let h = `<main class="wrap">
+  <section class="card res-hero">
+    <div class="ring"><svg viewBox="0 0 120 120" role="img" aria-label="Rezultat ${r.ok} od ${r.n}">
+      <circle cx="60" cy="60" r="52" class="r-bg"/>
+      <circle cx="60" cy="60" r="52" class="r-fg ${good ? 'ok' : 'bad'}" stroke-dasharray="${(frac * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 60 60)"/>
+      <text x="60" y="62" text-anchor="middle" class="r-num">${r.ok}</text>
+      <text x="60" y="80" text-anchor="middle" class="r-sub">od ${r.n}</text>
+    </svg></div>
+    <div class="res-txt">
+      ${exam ? `<span class="pill ${r.pass ? 'ok' : 'bad'}">${r.pass ? 'Opravljeno' : 'Ni opravljeno'}</span>` : `<span class="pill info">${esc(runTitle())}</span>`}
+      <h1>${pct(frac)} %</h1>
+      <p>${txt}</p>
+      <p class="muted">${exam ? 'Porabljen čas ' + fmtTime(used) + ' · ' : ''}napačnih ${wrong} · brez odgovora ${skip}${S.timeout ? ' · čas je potekel, izpit je bil oddan samodejno' : ''}</p>
+    </div>
+  </section>`;
+  const keys = Object.keys(r.per).filter(k => r.per[k].n);
+  if (keys.length > 1) h += `<section class="card sk"><h2>Rezultat po sklopih</h2><div class="skrows">${keys.map(k => {
+      const p = r.per[k];
+      return `<div class="skrow${exam && p.ok === 0 ? ' zero' : ''}"><span class="skn"><b>S${k}</b> ${esc(SK[k])}</span><span class="skbar"><i style="width:${p.ok / p.n * 100}%"></i></span><span class="sks">${p.ok}/${p.n}</span></div>`;
+    }).join('')}</div></section>`;
+  const f = S.filter, items = [];
+  S.ids.forEach((id, i) => {
+    const a = S.ans[i], ok = a !== null && BY[id].options[a].correct;
+    if (f === 'all' || (f === 'wrong' && a !== null && !ok) || (f === 'skip' && a === null)) items.push(i);
+  });
+  const fb = [['all', 'Vsa (' + N + ')'], ['wrong', 'Napačna (' + wrong + ')'], ['skip', 'Brez odgovora (' + skip + ')']];
+  h += `<section class="review"><div class="rev-top"><h2>Pregled odgovorov</h2><div class="filters" role="group" aria-label="Prikaži">${fb.map(([k, t]) =>
+      `<button data-act="filter" data-f="${k}" aria-pressed="${f === k}">${t}</button>`).join('')}</div></div>
+    ${items.length ? items.map(viewRev).join('') : '<p class="muted">V tem pogledu ni vprašanj.</p>'}
+  </section>
+  <div class="actions">${exam ? '<button class="btn primary lg" data-act="start">Nov poskus</button>' : `<button class="btn primary lg" data-act="practice" data-pk="${esc(S.pk)}">Nova vadba</button>`}<button class="btn lg" data-act="home">Na začetek</button></div>
+  </main>`;
+  return h;
+}
+
+function viewRev(i){
+  const q = Q(i), a = S.ans[i], perm = S.perm[i];
+  const ok = a !== null && q.options[a].correct;
+  const st = a === null ? 'skip' : ok ? 'ok' : 'bad';
+  const lab = q.lab || (q.neg ? ['ne velja', 'velja'] : ['drži', 'ne drži']);
+  const truth = new Set(q.truth || []);
+  let h = `<article class="rev ${st}"><div class="rev-head"><span class="rnum">${i + 1}.</span><span class="chip">Sklop ${q.s}</span><span class="rres">${st === 'ok' ? 'Pravilno' : st === 'bad' ? 'Napačno' : 'Brez odgovora'}</span></div>
+    <p class="qtext sm">${q.q}</p>`;
+  if (!q.single) h += `<ul class="rst">${q.st.map((t, k) => {
+      const on = truth.has(k + 1);
+      return `<li><span class="tag ${on ? 't' : 'f'}">${on ? lab[0] : lab[1]}</span><span class="sn">${k + 1}</span><span>${esc(t)}</span></li>`;
+    }).join('')}</ul>`;
+  h += `<ul class="ropt">${perm.map((oi, pos) => {
+      const o = q.options[oi];
+      const cls = o.correct ? 'cor' : (oi === a ? 'wrong' : '');
+      const mark = o.correct ? (oi === a ? 'tvoj odgovor · pravilno' : 'pravilen odgovor') : (oi === a ? 'tvoj odgovor' : '');
+      return `<li class="${cls}"><span class="let">${LET[pos]}</span><span>${esc(o.text)}</span>${mark ? `<em>${mark}</em>` : '<span></span>'}</li>`;
+    }).join('')}</ul>`;
+  if (q.ex) h += `<p class="ex">${esc(q.ex)}</p>`;
+  return h + `</article>`;
+}
+
+function viewLogin(){
+  return `<main class="wrap login-wrap">
+  <section class="card login">
+    <p class="eyebrow">Izpit za trženje enot vzajemnih skladov · ATVP</p>
+    <h1>Poskusni izpit</h1>
+    <p class="muted">Za dostop vpiši uporabniško ime in geslo.</p>
+    <form id="login" class="lg-form" novalidate>
+      <label class="fld"><span>Uporabniško ime</span><input id="lg-user" name="lg-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" value="${esc(LOGIN.user)}"></label>
+      <label class="fld"><span>Geslo</span><input id="lg-pass" name="lg-pass" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"></label>
+      <p class="lg-err" role="alert">${esc(LOGIN.err)}</p>
+      <button class="btn primary lg" type="submit" ${LOGIN.busy ? 'disabled' : ''}>${LOGIN.busy ? 'Preverjam …' : 'Vstopi'}</button>
+    </form>
+  </section>
+  </main>`;
+}
+
+function render(){
+  if (!BANK.length) {
+    app.innerHTML = viewLogin();
+    if (!LOGIN.busy) { const f = document.getElementById(LOGIN.user ? 'lg-pass' : 'lg-user'); if (f) f.focus(); }
+    return;
+  }
+  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : viewStart();
+}
+function setAnswer(oi){
+  const i = S.cur;
+  if (!isExam() && S.ans[i] !== null) return;
+  S.ans[i] = oi;
+  if (!isExam()) {
+    const id = S.ids[i]; P.seen[id] = 1;
+    if (BY[id].options[oi].correct) delete P.miss[id]; else P.miss[id] = 1;
+    saveP();
+  }
+  save(); render();
+  const b = app.querySelector('.opt[data-o="' + oi + '"]');
+  if (b && !b.disabled) b.focus({ preventScroll: true });
+  else { const nx = app.querySelector('.navrow .btn:last-child'); if (nx) nx.focus({ preventScroll: true }); }
+}
+function move(d){
+  const n = S.cur + d; if (n < 0 || n >= S.ids.length) return;
+  S.cur = n; save(); render(); toTop();
+}
+function askSubmit(){ S.confirm = true; render(); const c = app.querySelector('[data-act="confirm"]'); if (c) c.focus(); }
+
+function bind(){
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b || !app.contains(b) || b.disabled) return;
+    switch (b.dataset.act) {
+      case 'start': begin('exam'); break;
+      case 'practice': begin('practice', b.dataset.pk); break;
+      case 'home': S = blank(); save(); render(); toTop(); break;
+      case 'logout': logout(); break;
+      case 'plen': P.plen = Number(b.dataset.v); saveP(); render(); break;
+      case 'resetp': S.resetAsk = true; render(); { const c = app.querySelector('[data-act="resetok"]'); if (c) c.focus(); } break;
+      case 'resetok': P = Object.assign(freshP(), { plen: P.plen }); saveP(); S.resetAsk = false; render(); break;
+      case 'select': setAnswer(Number(b.dataset.o)); break;
+      case 'prev': move(-1); break;
+      case 'next': move(1); break;
+      case 'go': S.cur = Number(b.dataset.q); save(); render(); toTop(); break;
+      case 'flag': S.flags[S.cur] = !S.flags[S.cur]; save(); render(); break;
+      case 'submit': askSubmit(); break;
+      case 'cancel': S.confirm = false; S.resetAsk = false; render(); break;
+      case 'confirm': finish(false); break;
+      case 'filter': S.filter = b.dataset.f; save(); render(); break;
+    }
+  });
+  document.addEventListener('submit', e => {
+    if (!e.target || e.target.id !== 'login') return;
+    e.preventDefault();
+    if (LOGIN.busy) return;
+    const f = e.target.elements;
+    login(f['lg-user'].value, f['lg-pass'].value);
+  });
+  document.addEventListener('keydown', e => {
+    if (!S || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (S.confirm || S.resetAsk) { if (e.key === 'Escape') { S.confirm = false; S.resetAsk = false; render(); } return; }
+    if (S.phase !== 'run') return;
+    if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+    if (e.key === 'ArrowRight') { move(1); e.preventDefault(); return; }
+    if (e.key === 'ArrowLeft') { move(-1); e.preventDefault(); return; }
+    const k = e.key.toLowerCase();
+    if (k.length === 1) {
+      const pos = 'abcdefgh'.indexOf(k), perm = S.perm[S.cur];
+      if (pos >= 0 && pos < perm.length) setAnswer(perm[pos]);
+    }
+  });
+  setInterval(() => {
+    if (!S || S.phase !== 'run' || !isExam()) return;
+    const rem = S.endsAt - Date.now();
+    if (rem <= 0) { finish(true); return; }
+    const t = document.getElementById('timer');
+    if (t) { t.textContent = fmtTime(rem); t.className = 'timer ' + tclass(rem); }
+  }, 500);
+}
+
+/* ---------- access: the question bank is AES-GCM encrypted; the key is derived from username + password ---------- */
+let ENC = null, LOGIN = { err:'', busy:false, user:'' };
+const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const b64e = u => { let s = ''; u.forEach(b => { s += String.fromCharCode(b); }); return btoa(s); };
+function getKey(){ try { return localStorage.getItem(KSTORE); } catch (e) { return null; } }
+function setKey(raw){ try { if (raw) localStorage.setItem(KSTORE, raw); else localStorage.removeItem(KSTORE); } catch (e) {} }
+function loadEnc(){
+  if (typeof window !== 'undefined' && window.BANK_ENC) return Promise.resolve(window.BANK_ENC);
+  return fetch('questions.enc.json', { cache:'no-cache' }).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+}
+async function deriveKey(user, pass){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(user.trim().toUpperCase() + ':' + pass), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({ name:'PBKDF2', salt:b64d(ENC.salt), iterations:ENC.iter, hash:'SHA-256' }, base, { name:'AES-GCM', length:256 }, true, ['decrypt']);
+}
+async function openBank(key){
+  const buf = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b64d(ENC.iv) }, key, b64d(ENC.data));
+  const data = JSON.parse(new TextDecoder().decode(buf));
+  BANK = data.q.map(prep); BY = {}; BANK.forEach(q => { BY[q.id] = q; });
+  S = load() || blank();
+  if (S.phase === 'run' && isExam() && Date.now() >= S.endsAt) finish(true); else render();
+}
+async function login(user, pass){
+  LOGIN = { err:'', busy:true, user:user.trim() }; render();
+  try {
+    const key = await deriveKey(user, pass);
+    await openBank(key);
+    setKey(b64e(new Uint8Array(await crypto.subtle.exportKey('raw', key))));
+    LOGIN = { err:'', busy:false, user:'' };
+  } catch (e) {
+    LOGIN = { err:'Napačno uporabniško ime ali geslo.', busy:false, user:user.trim() };
+    BANK = []; BY = {}; S = null; render();
+  }
+}
+function logout(){ setKey(null); BANK = []; BY = {}; S = null; LOGIN = { err:'', busy:false, user:'' }; render(); toTop(); }
+function errorCard(t, m){ return '<main class="wrap"><section class="card"><h2>' + t + '</h2><p class="muted">' + m + '</p></section></main>'; }
+function init(){
+  app = document.getElementById('app');
+  app.innerHTML = '<main class="wrap"><p class="muted">Nalagam …</p></main>';
+  P = loadP();
+  bind();
+  if (!(window.crypto && crypto.subtle)) { app.innerHTML = errorCard('Brskalnik ni podprt', 'Odpri stran v posodobljenem brskalniku (Chrome, Safari, Firefox ali Edge).'); return; }
+  loadEnc().then(async enc => {
+    ENC = enc;
+    const saved = getKey();
+    if (saved) {
+      try { await openBank(await crypto.subtle.importKey('raw', b64d(saved), { name:'AES-GCM' }, true, ['decrypt'])); return; }
+      catch (e) { setKey(null); BANK = []; BY = {}; S = null; }
+    }
+    render();
+  }).catch(() => { app.innerHTML = errorCard('Vprašanj ni bilo mogoče naložiti', 'Osveži stran in poskusi znova.'); });
+}
+
+if (typeof document !== 'undefined') init();
+else if (typeof module !== 'undefined') module.exports = { prep, specSet, specLabel, eqSet };
+</script>
+</body>
+</html>
