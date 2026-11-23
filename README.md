@@ -10,7 +10,7 @@ Spletna aplikacija za pripravo na izpit za trženje enot vzajemnih skladov (ATVP
 - **Vadba po sklopih:** brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.
 - **Zgrešena vprašanja:** napačno odgovorjena vprašanja se shranijo za ponovitev.
 
-Banka obsega 305 vprašanj iz gradiv vseh sedmih sklopov. Večina jih ima najprej oštevilčene trditve, nato kombinirane odgovore (npr. »1, 2 in 4«, »vse razen 3«). Vmes so klasična vprašanja in praktični primeri.
+Banka obsega 356 vprašanj iz gradiv vseh sedmih sklopov, preverjenih ob originalnih gradivih. Večina jih ima najprej oštevilčene trditve, nato kombinirane odgovore (npr. »1, 2 in 4«, »vse razen 3«). Vmes so klasična vprašanja in praktični primeri.
 
 ## Dostop
 
