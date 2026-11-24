@@ -13,7 +13,7 @@ Spletna aplikacija za pripravo na izpit za trženje enot vzajemnih skladov (ATVP
 - **Dril »drži / ne drži«:** vsaka trditev iz banke posebej, s takojšnjo rešitvijo in pojasnilom; najprej pridejo zgrešene in nevidene trditve.
 - **Učna gradiva:** miselni vzorci za vseh 7 sklopov, sheme v lekcijah, pregled rokov in zneskov z iskanjem, primerjalne tabele, kartice za ponavljanje in infografika za vsak sklop.
 
-Banka obsega 849 vprašanj iz gradiv vseh sedmih sklopov, preverjenih ob originalnih gradivih. Večina jih ima najprej oštevilčene trditve, nato kombinirane odgovore (npr. »samo 2«, »1, 2 in 4«, »vse razen 3«). Druga so klasična vprašanja z odgovori A–D in praktični primeri. Nekatera vprašanja imajo »dvojčka« v drugi obliki (A–D in trditve); v istem izpitu ali vaji se nikoli ne pojavita oba.
+Banka obsega 843 vprašanj iz gradiv vseh sedmih sklopov, preverjenih ob originalnih gradivih. Večina jih ima najprej oštevilčene trditve, nato kombinirane odgovore (npr. »samo 2«, »1, 2 in 4«, »vse razen 3«). Druga so klasična vprašanja z odgovori A–D in praktični primeri. Nekatera vprašanja imajo »dvojčka« v drugi obliki (A–D in trditve); v istem izpitu ali vaji se nikoli ne pojavita oba. Računskih vprašanj je malo (pravi izpit jih skoraj nima in kalkulator ni dovoljen): na izpitu je največ eno, pa še to le v približno vsakem tretjem, v vaji največ dve na začetku seta.
 
 ## Dostop
 

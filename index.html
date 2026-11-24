@@ -491,22 +491,30 @@ function prioritized(pool){
 }
 // twins (same q.g) are two versions of one question: keep only the first one that comes up
 function noTwins(list){ const seen = new Set(); return list.filter(q => !q.g || (!seen.has(q.g) && seen.add(q.g))); }
+// calculation questions (q.c): the real exam had almost none and no calculator allowed
+const CALC_EXAM_SHARE = 1 / 3, CALC_PRACTICE = 2; // one calc question in about every third exam
+function capCalc(list, max){ let n = 0; const keep = [], later = []; list.forEach(q => (q.c && n++ >= max ? later : keep).push(q)); return keep.concat(later); }
 function drawExam(){
-  const ids = [];
+  const ids = []; let calc = 0; const calcMax = Math.random() < CALC_EXAM_SHARE ? 1 : 0;
   Object.keys(QUOTA).forEach(k => {
-    const pick = noTwins(prioritized(BANK.filter(q => String(q.s) === k))).slice(0, QUOTA[k]);
+    const pick = [];
+    for (const q of noTwins(prioritized(BANK.filter(q => String(q.s) === k)))) {
+      if (pick.length >= QUOTA[k]) break;
+      if (q.c) { if (calc >= calcMax) continue; calc++; }
+      pick.push(q);
+    }
     mix(pick).forEach(q => ids.push(q.id));
   });
   return ids;
 }
 function drawPractice(pk){
-  if (pk && pk.startsWith('L:')) { const l = LBY[pk.slice(2)]; return l ? noTwins(mix(lessonQs(l))).slice(0, 15).map(q => q.id) : []; }
+  if (pk && pk.startsWith('L:')) { const l = LBY[pk.slice(2)]; return l ? capCalc(noTwins(mix(lessonQs(l))), CALC_PRACTICE).slice(0, 15).map(q => q.id) : []; }
   if (pk === 'miss') {
     const pool = BANK.filter(q => P.miss[q.id]);
     const list = noTwins(mix(pool)).slice(0, P.plen || pool.length);
     return list.sort((a, b) => a.s - b.s).map(q => q.id);
   }
-  const list = noTwins(prioritized(BANK.filter(q => String(q.s) === pk)));
+  const list = capCalc(noTwins(prioritized(BANK.filter(q => String(q.s) === pk))), CALC_PRACTICE);
   return list.slice(0, P.plen || list.length).map(q => q.id);
 }
 function begin(mode, pk){
@@ -1162,7 +1170,7 @@ function skChips(cur, all){
 function buildDrill(){
   DR = []; DRBY = {}; QL = null;
   BANK.forEach(q => {
-    if (q.single || !Array.isArray(q.st)) return;
+    if (q.single || q.c || !Array.isArray(q.st)) return; // no calculations in the quick drill
     const tr = new Set(q.truth || []);
     q.st.forEach((t, k) => { const d = { id: q.id + '.' + (k + 1), q, t, ok: q.neg ? !tr.has(k + 1) : tr.has(k + 1) }; DR.push(d); DRBY[d.id] = d; });
   });
