@@ -338,6 +338,17 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .fc-act{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
 .fc-act .btn{min-width:140px}
 .fc-no{border-color:var(--bad);color:var(--bad)}
+.dr-q{display:grid;gap:12px;align-content:center;min-height:190px;padding:24px clamp(18px,4vw,32px);border-width:2px}
+.dr-q.ok{border-color:var(--good)} .dr-q.bad{border-color:var(--bad)}
+.dr-ctx{color:var(--muted);font-size:.92rem;line-height:1.45}
+.dr-st{font-family:var(--f-head);font-weight:800;font-size:clamp(1.1rem,2.8vw,1.35rem);line-height:1.4}
+.dr-fb{padding:9px 12px;border-radius:10px;background:var(--sel)}
+.dr-q.ok .dr-fb{background:var(--good-soft);color:var(--good)} .dr-q.bad .dr-fb{background:var(--bad-soft);color:var(--bad)}
+.dr-ex{font-size:.95rem;line-height:1.55}
+.fc-act .dr-t,.fc-act .dr-f{min-width:150px;font-weight:700}
+.dr-t{border-color:var(--good);color:var(--good)} .dr-f{border-color:var(--bad);color:var(--bad)}
+.dr-miss{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.dr-miss li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:.95rem}
 .dg{margin:4px 0 6px;display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
 .dg figcaption{font-family:var(--f-head);font-weight:800;font-size:.98rem}
 .dg-cap{font-size:.85rem;color:var(--muted)}
@@ -429,6 +440,7 @@ let HAS_CLAUDE = false, AI = null, TTS = null, DICT = null, AIOFF = '', AICTL = 
 let SPEAKING = '', DICTST = 'idle', DICTBASE = '';
 const CHAT = {}, DRAFT = {};
 let MM = {}, SH = {}, RZ = [], CMP = [], FC = [], FCBY = {}, IG = null;
+let DR = [], DRBY = {}, QL = null;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 function fmtTime(ms){ ms = Math.max(0, ms); const t = Math.ceil(ms / 1000); const m = Math.floor(t / 60), s = t % 60; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); }
@@ -442,7 +454,7 @@ const isExam = () => S.mode === 'exam';
 function plural(n, one, two, few, many){ const m = n % 100; return m === 1 ? one : m === 2 ? two : (m === 3 || m === 4) ? few : many; }
 
 /* ---------- persistence ---------- */
-function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null, fc:{} }; }
+function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null, fc:{}, dr:{} }; }
 function loadP(){
   try {
     const p = JSON.parse(localStorage.getItem(PSTORE));
@@ -453,7 +465,7 @@ function loadP(){
 function saveP(){ try { localStorage.setItem(PSTORE, JSON.stringify(P)); } catch (e) {} }
 function blank(){
   return { phase:'start', mode:'exam', pk:null, ids:[], perm:[], ans:[], flags:[], cur:0,
-           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false, tl:null, sk:0, rzq:'', deck:null, di:0, flip:false, fok:0, fbad:0 };
+           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false, tl:null, sk:0, rzq:'', deck:null, di:0, flip:false, fok:0, fbad:0, dk:null, dj:0, da:null, dok:0, dmiss:[] };
 }
 function load(){
   try {
@@ -461,6 +473,7 @@ function load(){
     if (!s || !Array.isArray(s.ids)) return null;
     if (s.phase === 'teach' && s.tl && !LBY[s.tl]) s.tl = null;
     if (s.phase === 'fc' && Array.isArray(s.deck) && !s.deck.every(id => FCBY[id])) s.deck = null;
+    if (s.phase === 'dr' && Array.isArray(s.dk) && !s.dk.every(id => DRBY[id])) s.dk = null;
     if (s.phase === 'run' || s.phase === 'result') {
       if (!s.ids.length || !s.ids.every(id => BY[id])) return null;
       if (!Array.isArray(s.perm) || s.perm.length !== s.ids.length) return null;
@@ -560,6 +573,7 @@ function viewStart(){
   </section>
   <div class="actions"><button class="btn primary lg" data-act="start">Začni izpit</button></div>
   ${viewTeachCard()}
+  ${viewDrillCard()}
   ${viewMatsCard()}
   <section class="card modes">
     <div class="mode-head"><div><h2>Vadba po sklopih</h2><p class="muted sm">Brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.</p></div>
@@ -794,8 +808,9 @@ function render(){
     if (!LOGIN.busy) { const f = document.getElementById(LOGIN.user ? 'lg-pass' : 'lg-user'); if (f) f.focus(); }
     return;
   }
-  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : S.phase === 'teach' ? (S.tl ? viewLesson() : viewTeachIndex()) : S.phase === 'mm' ? viewMM() : S.phase === 'rz' ? viewRZ() : S.phase === 'cmp' ? viewCMP() : S.phase === 'fc' ? viewFC() : S.phase === 'ig' ? viewIG() : viewStart();
+  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : S.phase === 'teach' ? (S.tl ? viewLesson() : viewTeachIndex()) : S.phase === 'mm' ? viewMM() : S.phase === 'rz' ? viewRZ() : S.phase === 'cmp' ? viewCMP() : S.phase === 'fc' ? viewFC() : S.phase === 'ig' ? viewIG() : S.phase === 'dr' ? viewDR() : viewStart();
   if (S.phase === 'ig') mountIG();
+  if (S.phase === 'dr') { const nb = document.getElementById('drnext'); if (nb) nb.focus({ preventScroll:true }); }
 }
 function setAnswer(oi){
   const i = S.cur;
@@ -834,13 +849,18 @@ function bind(){
       case 'speak': speakFor(b.dataset.k); break;
       case 'mic': toggleMic(); break;
       case 'mat': { const v = b.dataset.v; stopSpeak(); S = Object.assign(blank(), { phase:v, sk: (v === 'mm' || v === 'ig') ? 1 : 0 }); save(); render(); toTop(); } break;
-      case 'msk': S.sk = Number(b.dataset.v); if (S.phase === 'fc') S.deck = null; save(); render(); if (S.phase === 'ig' && b.closest('.ig-nav')) toTop(); break;
+      case 'msk': S.sk = Number(b.dataset.v); if (S.phase === 'fc') S.deck = null; if (S.phase === 'dr') S.dk = null; save(); render(); if (S.phase === 'ig' && b.closest('.ig-nav')) toTop(); break;
       case 'mmall': app.querySelectorAll('.mm-br').forEach(d => { d.open = b.dataset.v === '1'; }); break;
       case 'fcstart': fcStart(); break;
       case 'fcflip': S.flip = true; save(); render(); break;
       case 'fcno': fcAnswer(false); break;
       case 'fcyes': fcAnswer(true); break;
       case 'fcend': S.deck = null; save(); render(); toTop(); break;
+      case 'drstart': drStart(false); break;
+      case 'drmiss': drStart(true); break;
+      case 'drans': drAnswer(b.dataset.v === '1'); break;
+      case 'drnext': drNext(); break;
+      case 'drend': S.dk = null; save(); render(); toTop(); break;
       case 'logout': logout(); break;
       case 'plen': P.plen = Number(b.dataset.v); saveP(); render(); break;
       case 'resetp': S.resetAsk = true; render(); { const c = app.querySelector('[data-act="resetok"]'); if (c) c.focus(); } break;
@@ -884,6 +904,14 @@ function bind(){
       if (!S.flip && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); S.flip = true; save(); render(); }
       else if (S.flip && e.key === 'ArrowLeft') { e.preventDefault(); fcAnswer(false); }
       else if (S.flip && e.key === 'ArrowRight') { e.preventDefault(); fcAnswer(true); }
+      return;
+    }
+    if (S.phase === 'dr' && S.dk && S.dj < S.dk.length && !(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))) {
+      const k = e.key.toLowerCase();
+      if (S.da === null) {
+        if (k === 'd' || e.key === 'ArrowLeft') { e.preventDefault(); drAnswer(true); }
+        else if (k === 'n' || e.key === 'ArrowRight') { e.preventDefault(); drAnswer(false); }
+      } else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); drNext(); }
       return;
     }
     if (S.phase !== 'run') return;
@@ -1128,6 +1156,90 @@ function skChips(cur, all){
   const opts = (all ? [[0, 'Vsi']] : []).concat(Object.keys(SK).map(k => [Number(k), 'S' + k]));
   return `<div class="filters" role="group" aria-label="Sklop">${opts.map(([v, t]) => `<button data-act="msk" data-v="${v}" aria-pressed="${cur === v}"${v ? ` title="${esc(SK[v])}"` : ''}>${t}</button>`).join('')}</div>`;
 }
+/* drill: every statement of the bank on its own, answered "drži / ne drži" */
+function buildDrill(){
+  DR = []; DRBY = {}; QL = null;
+  BANK.forEach(q => {
+    if (q.single || !Array.isArray(q.st)) return;
+    const tr = new Set(q.truth || []);
+    q.st.forEach((t, k) => { const d = { id: q.id + '.' + (k + 1), q, t, ok: q.neg ? !tr.has(k + 1) : tr.has(k + 1) }; DR.push(d); DRBY[d.id] = d; });
+  });
+}
+const drKnown = d => (P.dr[d.id] || 0) >= 2;
+const drLab = d => d.q.lab || ['drži', 'ne drži'];
+const cap1 = t => t.charAt(0).toUpperCase() + t.slice(1);
+function qLesson(q){
+  if (!QL) { QL = {}; LESSONS.forEach(l => lessonQs(l).forEach(x => { if (!QL[x.id]) QL[x.id] = l.id; })); }
+  return QL[q.id];
+}
+function drPool(){ const k = S.sk || 0; return DR.filter(d => !k || d.q.s === k); }
+function drSpread(list){
+  // keep two statements of the same question apart, so one does not give away the other
+  const out = [], rest = list.slice();
+  while (rest.length) {
+    const prev = out.length ? out[out.length - 1].q.id : null;
+    const i = rest.findIndex(d => d.q.id !== prev);
+    out.push(rest.splice(i < 0 ? 0 : i, 1)[0]);
+  }
+  return out;
+}
+function drStart(onlyMiss){
+  const pool = drPool().filter(d => !onlyMiss || P.dr[d.id] === 0);
+  if (!pool.length) return;
+  const rank = d => P.dr[d.id] === 0 ? 0 : P.dr[d.id] === undefined ? 1 : 1 + P.dr[d.id];
+  const order = mix(pool).sort((a, b) => rank(a) - rank(b));
+  Object.assign(S, { dk: drSpread(order.slice(0, 20)).map(d => d.id), dj:0, da:null, dok:0, dmiss:[] });
+  save(); render(); toTop();
+}
+function drAnswer(v){
+  if (!S.dk || S.da !== null || S.dj >= S.dk.length) return;
+  const d = DRBY[S.dk[S.dj]];
+  if (!d) return;
+  S.da = v;
+  if (v === d.ok) { P.dr[d.id] = (P.dr[d.id] || 0) + 1; S.dok++; }
+  else { P.dr[d.id] = 0; S.dmiss.push(d.id); }
+  saveP(); save(); render();
+}
+function drNext(){ if (!S.dk || S.da === null) return; S.dj++; S.da = null; save(); render(); }
+function viewDrillCard(){
+  if (!DR.length) return '';
+  const known = DR.filter(drKnown).length, miss = DR.filter(d => P.dr[d.id] === 0).length;
+  return `<section class="card teach-card">
+    <div><h2>Dril: drži ali ne drži</h2><p class="muted sm">Posamezne trditve iz banke vprašanj, eno za drugo. Prav to izpit preverja v kombiniranih odgovorih. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.</p></div>
+    <div class="tprog"><span class="mini" aria-hidden="true"><i style="width:${known / DR.length * 100}%"></i></span><span class="m">Obvladanih ${known} od ${DR.length} trditev${miss ? ' · zgrešenih ' + miss : ''}</span></div>
+    <div class="lact"><button class="btn primary" data-act="mat" data-v="dr">Začni dril</button></div>
+  </section>`;
+}
+function viewDR(){
+  let h = `<header class="bar"><div class="bar-in"><div class="bar-q"><span class="eyebrow">Dril · </span><b>Drži ali ne drži</b></div><span class="bar-sp"></span><button class="btn" data-act="home">Na začetek</button></div></header><main class="wrap">`;
+  if (!S.dk) {
+    const pool = drPool(), known = pool.filter(drKnown).length, miss = pool.filter(d => P.dr[d.id] === 0).length;
+    return h + `<div class="mat-ctl">${skChips(S.sk || 0, true)}</div>
+      <section class="card fc-setup">
+        <h2>${S.sk ? 'S' + S.sk + ' · ' + esc(SK[S.sk]) : 'Vsi sklopi'}</h2>
+        <div class="tiles fc-stats"><div class="tile"><b>${pool.length}</b><span>trditev</span></div><div class="tile"><b>${known}</b><span>obvladanih (2× zapored)</span></div><div class="tile"><b>${miss}</b><span>zgrešenih</span></div></div>
+        <p class="muted sm">Krog ima 20 trditev: najprej tiste, ki si jih zgrešil, nato še nevidene. Odgovoriš s tipko D (drži) ali N (ne drži), naprej greš z Enter.</p>
+        <div class="lact"><button class="btn primary lg" data-act="drstart" ${pool.length ? '' : 'disabled'}>Začni krog</button>${miss ? `<button class="btn" data-act="drmiss">Le zgrešene (${miss})</button>` : ''}</div>
+      </section></main>`;
+  }
+  if (S.dj >= S.dk.length) {
+    const n = S.dk.length, missNow = drPool().filter(d => P.dr[d.id] === 0).length;
+    return h + `<section class="card fc-done"><h2>Krog končan: ${S.dok} / ${n} (${Math.round(S.dok / (n || 1) * 100)} %)</h2>
+      ${S.dmiss.length ? `<p class="muted sm">Zgrešene trditve in pravilni odgovor:</p><ul class="dr-miss">${S.dmiss.map(id => { const d = DRBY[id]; if (!d) return ''; const lab = drLab(d);
+        return `<li><span class="tag ${d.ok ? 't' : 'f'}">${esc(d.ok ? lab[0] : lab[1])}</span><span><span class="muted sm">${d.q.q}</span><br>${esc(d.t)}</span>${lnk(qLesson(d.q), true)}</li>`; }).join('')}</ul>` : '<p>Brez napake. Odlično!</p>'}
+      <div class="lact"><button class="btn primary" data-act="drstart">Nov krog</button>${missNow ? `<button class="btn" data-act="drmiss">Le zgrešene (${missNow})</button>` : ''}<button class="btn" data-act="drend">Izberi sklop</button></div></section></main>`;
+  }
+  const d = DRBY[S.dk[S.dj]], lab = drLab(d), ans = S.da, done = ans !== null, right = done && ans === d.ok;
+  return h + `<div class="fc-top"><span class="chip">S${d.q.s}</span><span class="muted sm">Trditev ${S.dj + 1} / ${S.dk.length} · pravilnih ${S.dok}</span><button class="linkbtn" data-act="drend">Končaj krog</button></div>
+    <div class="prog"><div style="width:${S.dj / S.dk.length * 100}%"></div></div>
+    <article class="card dr-q${done ? (right ? ' ok' : ' bad') : ''}" aria-live="polite">
+      <p class="dr-ctx">${d.q.q}</p>
+      <p class="dr-st">${esc(d.t)}</p>
+      ${done ? `<p class="dr-fb"><b>${right ? '✓ Pravilno' : '✗ Napačno'}</b> · ${d.q.lab ? 'pravilno je »' + esc(d.ok ? lab[0] : lab[1]) + '«' : 'trditev <b>' + (d.ok ? 'drži' : 'ne drži') + '</b>'}</p>${d.q.ex ? `<p class="dr-ex">${esc(d.q.ex)}</p>` : ''}` : ''}
+    </article>
+    <div class="fc-act">${done ? '<button class="btn primary lg" id="drnext" data-act="drnext">Naprej →</button>' : `<button class="btn dr-t" data-act="drans" data-v="1">${esc(cap1(lab[0]))}</button><button class="btn dr-f" data-act="drans" data-v="0">${esc(cap1(lab[1]))}</button>`}</div>
+  </main>`;
+}
 /* infographics: one poster per sklop, rendered in a shadow root so its styles stay separate from the app */
 function hasIG(){ return !!(IG && IG.css && IG.p && Object.keys(IG.p).length); }
 function viewIG(){
@@ -1260,6 +1372,7 @@ async function openBank(key){
   LESSONS = Array.isArray(data.l) ? data.l : []; LBY = {}; LQ = {};
   LESSONS.forEach((l, i) => { l.i = i; LBY[l.id] = l; });
   MM = data.mm || {}; SH = data.sh || {}; RZ = data.rz || []; CMP = data.cmp || []; FC = data.fc || []; FCBY = {}; IG = data.ig || null;
+  buildDrill();
   FC.forEach(c => { FCBY[c.id] = c; });
   S = load() || blank();
   if (S.phase === 'run' && isExam() && Date.now() >= S.endsAt) finish(true); else render();
