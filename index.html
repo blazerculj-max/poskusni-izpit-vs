@@ -389,6 +389,94 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .dg-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--muted)}
 .dg-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 @media (max-width:560px){.dg-bar{grid-template-columns:1fr auto}.dg-bar .dg-bt{grid-column:1/-1;order:3}.dg-srow{grid-template-columns:1fr}}
+
+/* ---- design pass 2026-11-24: compact bars on phones, statements read as a list (not buttons) ---- */
+.stmts{gap:0;border-top:1px solid var(--line)}
+.stmts li{background:none;border-radius:0;padding:10px 2px;border-bottom:1px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:.9rem}
+@media (max-width:560px){
+  .bar-in{flex-wrap:nowrap;gap:8px;padding-block:8px}
+  .bar-q{font-size:.95rem}.bar-q b{font-size:1.15rem}
+  .bar-q .eyebrow,.ans-count .lbl{display:none}
+  .bar .btn{padding:7px 12px;font-size:.92rem}
+  .prog{flex:1 1 36px;min-width:36px}
+  .actions .btn.lg{flex:1}
+}
+
+/* ---- animated explainers (lesson schemes of type anim) ---- */
+.an-stage{display:grid;gap:10px}
+.an-svg{width:100%;height:auto;display:block}
+.an-ax{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+.an-ref{stroke:var(--muted);stroke-dasharray:4 4;stroke-width:1;opacity:.55}
+.an-seg{stroke:var(--accent-2);stroke-width:2.5;opacity:0;transition:opacity .3s}
+.an-pt{fill:var(--accent-2);opacity:0;transition:opacity .3s}
+.an-b{fill:var(--accent);transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.an-b.low{fill:var(--good)}
+.an-bl{font-family:var(--f-mono);font-size:10px;fill:var(--ink);opacity:0;transition:opacity .3s .25s}
+.an-seg.on,.an-pt.on,.an-bl.on{opacity:1}
+.an-b.on{transform:scaleY(1)}
+.an-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.8rem;color:var(--muted)}
+.an-legend i{display:inline-block;width:14px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.an-legend .k-line{background:var(--accent-2);height:3px;vertical-align:2px}
+.an-legend .k-bar{background:var(--accent)}
+.an-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.an-stats div{display:grid;gap:2px;padding:8px 10px;border-radius:9px;background:var(--soft);font-size:.84rem;transition:background .3s}
+.an.done .an-stats div:last-child{background:var(--good-soft)}
+.an-cap{min-height:3.3em;font-size:.92rem;padding:8px 12px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);border-radius:0 8px 8px 0}
+.an-ctl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.an-dots{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.an-dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .2s}
+.an-dots i.on{background:var(--accent)}
+@media (max-width:560px){.an-stats{grid-template-columns:1fr}.an-dots{display:none}.an-svg .an-ax{font-size:19px}.an-svg .an-bl{font-size:15px;letter-spacing:-.5px}.an-cap{font-size:.9rem}}
+/* cut-off timeline */
+.an-cut{display:grid;gap:0;font-size:.84rem}
+.an-cr{display:grid;grid-template-columns:76px 1fr 1fr;gap:8px;align-items:center;min-height:36px;border-bottom:1px dashed var(--line)}
+.an-cr.hd{border-bottom:1px solid var(--line)}
+.an-dl{font-family:var(--f-mono);font-size:.78rem;color:var(--muted);font-weight:600}
+.an-ca,.an-cb{display:flex;flex-wrap:wrap;gap:4px;align-items:center;align-self:stretch;padding:4px 0;position:relative}
+.an-h{font-size:.84rem;opacity:.35;transition:opacity .3s}.an-h.on{opacity:1}
+.an-chip{font-family:var(--f-mono);font-size:.72rem;padding:3px 8px;border-radius:99px;background:var(--sel);color:var(--accent);opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s,box-shadow .3s}
+.an-chip.tok{background:var(--accent);color:var(--on-accent)}
+.an-chip.on{opacity:1;transform:none}
+.an-chip.hl{box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
+.an-ca{padding-left:20px!important}
+.an-chip.pay{position:absolute;left:5px;top:0;bottom:0;width:6px;padding:0;border-radius:0;background:var(--good);transform:scaleY(0);transform-origin:top}
+.an-chip.pay.on{transform:scaleY(1)}
+.an-chip.pay.end{position:static;width:auto;padding:3px 8px;border-radius:99px;margin-left:0;background:var(--good-soft);color:var(--good);transform:translateY(4px)}
+.an-chip.pay.end.on{transform:none}
+.an-cutline{position:relative;height:0;border-top:3px solid var(--warn);opacity:.35;transition:opacity .3s;margin:2px 0}
+.an-cutline span{position:absolute;right:0;top:-10px;font-family:var(--f-mono);font-size:.7rem;color:var(--warn);background:var(--card);padding:0 6px}
+.an-cutline.on{opacity:.75}.an-cutline.hl{opacity:1}
+.an-chip:not(.pay){border-radius:8px}
+@media (max-width:560px){.an-cr{grid-template-columns:46px 1fr 1fr;gap:6px}.an-chip{font-size:.68rem;padding:3px 6px}.an-ca{padding-left:14px!important}.an-chip.pay{left:2px;width:5px}}
+/* trade path */
+.an-trade{display:grid;gap:8px;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-areas:"atvp atvp atvp atvp atvp" "kup clk bor clp pro" ". kdd kdd kdd ."}
+.n-atvp{grid-area:atvp}.n-kup{grid-area:kup}.n-clk{grid-area:clk}.n-bor{grid-area:bor}.n-clp{grid-area:clp}.n-pro{grid-area:pro}.n-kdd{grid-area:kdd}
+.an-node{display:grid;gap:4px;align-content:start;padding:8px 9px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:.78rem;opacity:.4;transition:opacity .3s,box-shadow .3s,border-color .3s}
+.an-node b{font-size:.84rem}.an-node>span{color:var(--muted)}
+.an-node.on{opacity:1}
+.an-node.hl{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent);animation:anpulse 1.7s ease-in-out infinite}
+@keyframes anpulse{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--accent) 10%,transparent)}}
+.an-pill{justify-self:start;font-family:var(--f-mono);font-size:.7rem;padding:2px 7px;border-radius:99px;background:var(--sel);color:var(--accent);opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s}
+.an-pill.on{opacity:1;transform:none}
+.an-pill.got{background:var(--good-soft);color:var(--good)}
+@media (max-width:560px){.an-trade{grid-template-columns:1fr 1fr;grid-template-areas:"atvp atvp" "kup pro" "clk clp" "bor bor" "kdd kdd"}}
+/* tax-rate slider */
+.an-tax{display:grid;gap:10px}
+.an-tl{font-size:.92rem}
+.an-range{width:100%;accent-color:var(--accent)}
+.an-band{position:relative;display:flex;height:48px;border-radius:9px;overflow:hidden;border:1px solid var(--line)}
+.an-band span{display:grid;place-content:center;text-align:center;background:var(--soft);border-right:1px solid var(--line);transition:background .25s,color .25s}
+.an-band span:last-of-type{border-right:0}
+.an-band b{font-family:var(--f-mono);font-size:.9rem}
+.an-band em{font-style:normal;font-size:.7rem;color:var(--muted)}
+.an-band span.on{background:var(--accent);color:var(--on-accent)}.an-band span.on em{color:inherit;opacity:.85}
+.an-band{margin-bottom:8px;overflow:visible}
+.an-band span:first-child{border-radius:8px 0 0 8px}.an-band span:last-of-type{border-radius:0 8px 8px 0}
+.an-mark{position:absolute;bottom:-9px;width:0;height:0;margin-left:-7px;border:7px solid transparent;border-top:0;border-bottom:8px solid var(--warn);transition:left .2s}
+.an-big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.an-big b{font-family:var(--f-head);font-size:2rem;color:var(--accent);line-height:1}
+.an-big span{color:var(--muted);font-size:.9rem}
 </style>
 </head>
 <body>
@@ -570,7 +658,7 @@ function viewStart(){
   <section class="hero">
     <p class="eyebrow">Izpit za trženje enot vzajemnih skladov · ATVP</p>
     <h1>Poskusni izpit</h1>
-    <p class="lead">Banka <b>${total} vprašanj</b> iz gradiva vseh sedmih sklopov. Vsak poskus izbere 40 vprašanj po razporeditvi pravega izpita, najprej tista, ki jih še nisi videl. Najprej oštevilčene trditve, nato kombinirani odgovori, vmes klasična vprašanja in praktični primeri.</p>
+    <p class="lead">Banka <b>${total} vprašanj</b> iz gradiva vseh sedmih sklopov. Vsak poskus izbere 40 vprašanj po razporeditvi pravega izpita – najprej tista, ki jih še nisi videl.</p>
     <div class="tiles">
       <div class="tile"><b>40</b><span>vprašanj v izpitu</span></div>
       <div class="tile"><b>60:00</b><span>minut, čas teče sproti</span></div>
@@ -637,12 +725,12 @@ function viewRun(){
   let right = '';
   if (exam) {
     const rem = S.endsAt - Date.now();
-    right = `<span class="ans-count muted">${answered}/${N} odgovorjenih</span>
+    right = `<span class="ans-count muted">${answered}/${N}<span class="lbl"> odgovorjenih</span></span>
     <div id="timer" class="timer ${tclass(rem)}" role="timer" aria-label="Preostali čas">${fmtTime(rem)}</div>
     <button class="btn primary" data-act="submit">Oddaj</button>`;
   } else {
     const ok = S.ids.filter((id, k) => S.ans[k] !== null && BY[id].options[S.ans[k]].correct).length;
-    right = `<span class="ans-count muted">${ok}/${answered} pravilnih</span>
+    right = `<span class="ans-count muted">${ok}/${answered}<span class="lbl"> pravilnih</span></span>
     <button class="btn" data-act="submit">Končaj</button>`;
   }
   let h = `<header class="bar"><div class="bar-in">
@@ -670,7 +758,8 @@ function viewRun(){
   if (locked) {
     const ok = q.options[a].correct;
     const corPos = perm.findIndex(oi => q.options[oi].correct);
-    h += `<p class="fbk ${ok ? 'ok' : 'bad'}" role="status">${ok ? 'Pravilno.' : 'Napačno. Pravilen odgovor je ' + LET[corPos] + '.'}</p>`;
+    const corTxt = q.single ? '' : ' (' + q.options[perm[corPos]].text + ')';
+    h += `<p class="fbk ${ok ? 'ok' : 'bad'}" role="status">${ok ? 'Pravilno.' : 'Napačno. Pravilen odgovor je ' + LET[corPos] + esc(corTxt) + '.'}</p>`;
     if (q.ex) h += `<p class="ex">${esc(q.ex)}</p>`;
   }
   h += `</article>
@@ -813,6 +902,7 @@ function viewLogin(){
 }
 
 function render(){
+  animStop();
   if (!BANK.length) {
     app.innerHTML = viewLogin();
     if (!LOGIN.busy) { const f = document.getElementById(LOGIN.user ? 'lg-pass' : 'lg-user'); if (f) f.focus(); }
@@ -820,6 +910,7 @@ function render(){
   }
   app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : S.phase === 'teach' ? (S.tl ? viewLesson() : viewTeachIndex()) : S.phase === 'mm' ? viewMM() : S.phase === 'rz' ? viewRZ() : S.phase === 'cmp' ? viewCMP() : S.phase === 'fc' ? viewFC() : S.phase === 'ig' ? viewIG() : S.phase === 'dr' ? viewDR() : viewStart();
   if (S.phase === 'ig') mountIG();
+  if (S.phase === 'teach') mountAnims();
   if (S.phase === 'dr') { const nb = document.getElementById('drnext'); if (nb) nb.focus({ preventScroll:true }); }
 }
 function setAnswer(oi){
@@ -852,6 +943,8 @@ function bind(){
       case 'teach': openLesson(P.last && LBY[P.last] ? P.last : (LESSONS[0] && LESSONS[0].id)); break;
       case 'tindex': stopSpeak(); S = Object.assign(blank(), { phase:'teach' }); save(); render(); toTop(); break;
       case 'lesson': if (b.dataset.id) openLesson(b.dataset.id); break;
+      case 'anstep': animStop(); animStep(b.closest('figure.an'), Number(b.dataset.d)); break;
+      case 'anplay': animPlay(b.closest('figure.an')); break;
       case 'lnext': { const l = LBY[S.tl]; if (l) { P.done[l.id] = 1; saveP(); const n = LESSONS[l.i + 1]; if (n) openLesson(n.id); else { S = Object.assign(blank(), { phase:'teach' }); save(); render(); toTop(); } } } break;
       case 'ldone': { const id = S.tl; if (id) { if (P.done[id]) delete P.done[id]; else P.done[id] = 1; saveP(); render(); } } break;
       case 'ai': { const l = LBY[S.tl], qk = QUICK.find(x => x[0] === b.dataset.k); if (l && qk) askAI(l, qk[2], qk[1]); } break;
@@ -902,6 +995,7 @@ function bind(){
   document.addEventListener('input', e => {
     if (!e.target || !S) return;
     if (e.target.id === 'aiq' && S.tl) DRAFT[S.tl] = e.target.value;
+    if (e.target.classList && e.target.classList.contains('an-range')) { const f = e.target.closest('figure.an'); if (f) { f.dataset.step = e.target.value; AN[f.dataset.an] = Number(e.target.value); animApply(f); } }
     if (e.target.id === 'rzq') { S.rzq = e.target.value; const box = document.getElementById('rzlist'); if (box) box.innerHTML = rzList(); }
   });
   document.addEventListener('keydown', e => {
@@ -972,7 +1066,7 @@ function viewTeachIndex(){
   let h = `<header class="bar"><div class="bar-in">
     <div class="bar-q"><span class="eyebrow">Učitelj · </span><b>Kazalo</b></div>
     <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${LESSONS.length}" aria-valuenow="${done}" aria-label="Predelane lekcije"><div style="width:${done / (LESSONS.length || 1) * 100}%"></div></div>
-    <span class="ans-count muted">${done}/${LESSONS.length} predelanih</span>
+    <span class="ans-count muted">${done}/${LESSONS.length}<span class="lbl"> predelanih</span></span>
     <button class="btn" data-act="home">Na začetek</button>
   </div></header><main class="wrap">`;
   Object.keys(SK).forEach(k => {
@@ -1342,6 +1436,7 @@ function viewFC(){
 }
 /* diagrams inside lessons */
 function viewDiagram(d){
+  if (d.type === 'anim') return viewAnim(d);
   let body = '';
   if (d.type === 'tree') {
     body = `<div class="dg-tree"><div class="dg-root">${fmt(d.root.n)}</div><div class="dg-kids">${(d.root.c || []).map((c, i) => `<div class="dg-node" style="--bc:${BRC[i % BRC.length]}"><b>${fmt(c.n)}</b>${c.c ? `<ul>${c.c.map(x => `<li>${fmt(x.n)}</li>`).join('')}</ul>` : ''}</div>`).join('')}</div></div>`;
@@ -1360,6 +1455,166 @@ function viewDiagram(d){
   }
   return `<figure class="dg"><figcaption>${fmt(d.t)}</figcaption>${body}${d.cap ? `<p class="dg-cap">${fmt(d.cap)}</p>` : ''}</figure>`;
 }
+
+/* ---------- animated explainers in lessons (sh type 'anim', field kind): each kind builds its figure once,
+   steps then only toggle classes / transforms on that DOM, so CSS transitions do the animating ---------- */
+const AN = {};            // figure key (lesson:kind) -> current step
+let ANT = null;           // autoplay { t: interval, fig }
+const nf = (x, d) => { const [i, f] = Math.abs(Number(x)).toFixed(d).split('.'); return (x < 0 ? '−' : '') + i.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + (f ? ',' + f : ''); };
+const onIf = (fig, sel, test) => fig.querySelectorAll(sel).forEach(el => el.classList.toggle('on', test(el)));
+const ANK = {};
+const DCA_V = [100, 95, 90, 85, 80, 75, 70, 75, 80, 85, 90, 95, 100];
+ANK.dca = {
+  n: () => 15,
+  build: () => {
+    const W = 560, H = 262, x0 = 34, cw = (W - x0 - 6) / 13, yV = v => 18 + (100 - v) * 2.1, base = 240, uMax = 1000 / 70, bh = u => u / uMax * 104;
+    let s = `<svg viewBox="0 0 ${W} ${H}" class="an-svg" role="img" aria-label="VEP po mesecih in število enot, ki jih kupi vlagatelj B">
+      <text x="0" y="${yV(100) + 4}" class="an-ax">100</text><text x="0" y="${yV(70) + 4}" class="an-ax">70</text>
+      <line x1="${x0}" x2="${W - 6}" y1="${yV(100)}" y2="${yV(100)}" class="an-ref"/>
+      <text x="${x0 + cw * 6.5}" y="${yV(100) - 6}" text-anchor="middle" class="an-ax">A kupi vse pri VEP 100</text>`;
+    DCA_V.forEach((v, i) => {
+      const cx = x0 + cw * (i + .5), u = 1000 / v;
+      if (i) s += `<line class="an-seg" data-i="${i}" x1="${cx - cw}" y1="${yV(DCA_V[i - 1])}" x2="${cx}" y2="${yV(v)}"/>`;
+      s += `<circle class="an-pt" data-i="${i}" cx="${cx}" cy="${yV(v)}" r="4"/>
+        <rect class="an-b${v <= 75 ? ' low' : ''}" data-i="${i}" x="${cx - cw * .33}" width="${cw * .66}" y="${base - bh(u)}" height="${bh(u)}" rx="3"/>
+        <text class="an-bl" data-i="${i}" x="${cx}" y="${base - bh(u) - 4}" text-anchor="middle">${nf(u, 1)}</text>
+        <text class="an-ax" x="${cx}" y="${H - 4}" text-anchor="middle">${i}</text>`;
+    });
+    return s + `</svg><div class="an-legend"><span><i class="k-line"></i>VEP</span><span><i class="k-bar"></i>enote, ki jih B kupi za 1.000 €</span><span class="muted">mesec 0–12</span></div>
+      <div class="an-stats"><div><b>A · 13.000 € naenkrat</b><span data-f="a"></span></div><div><b>B · 13 × 1.000 €</b><span data-f="b"></span></div></div>`;
+  },
+  set: (fig, k) => {
+    const m = Math.min(k, 13), cur = m ? DCA_V[m - 1] : 100;
+    onIf(fig, '.an-b,.an-bl,.an-seg', el => +el.dataset.i < m);
+    onIf(fig, '.an-pt', el => +el.dataset.i < Math.max(m, 1));
+    let units = 0; for (let i = 0; i < m; i++) units += 1000 / DCA_V[i];
+    const inv = m * 1000;
+    fig.querySelector('[data-f="a"]').innerHTML = `130 enot · vrednost <b>${nf(130 * cur, 0)} €</b>`;
+    fig.querySelector('[data-f="b"]').innerHTML = m ? `${nf(units, 2)} enot · vloženo ${nf(inv, 0)} € · povpr. cena ${nf(inv / units, 2)} € · vrednost <b>${nf(units * cur, 0)} €</b>` : 'še nič ne vloži';
+    fig.classList.toggle('done', k >= 14);
+  },
+  cap: k => {
+    if (k === 0) return 'VEP v 12 mesecih najprej pade s 100 na 70 (−30 %), nato se vrne na 100. **A** vloži 13.000 € naenkrat, **B** vsak mesec po 1.000 €.';
+    if (k >= 14) return 'Konec: A ima 130 enot in **13.000 € (0 %)**, enako kot trg. B ima 152,76 enote po povprečni ceni 85,10 € in **15.276 € (+17,51 %)** – ker je ob nizki VEP kupil več enot.';
+    const v = DCA_V[k - 1], u = 1000 / v;
+    return `Mesec ${k - 1}: VEP = **${v}** → B za 1.000 € kupi **${nf(u, 2)} enot**.` + (v === 70 ? ' Najnižja VEP: za isti znesek največ enot.' : '') + (k === 13 ? ' VEP je spet na izhodišču.' : '');
+  }
+};
+ANK.cutoff = {
+  n: () => 6,
+  build: () => {
+    const c = (cls, txt) => `<span class="an-chip ${cls}">${txt}</span>`;
+    const row = (day, a, b, extra = '') => `<div class="an-cr${extra}"><span class="an-dl">${day}</span><span class="an-ca">${a}</span><span class="an-cb">${b}</span></div>`;
+    return `<div class="an-cut">
+      ${row('', '<b class="an-h s1">Zahteva A</b>', '<b class="an-h s3">Zahteva B</b>', ' hd')}
+      ${row('T', c('s1 tok', 'prispe pred presečno uro') + c('s1', 'velja VEP dneva T'), '')}
+      <div class="an-cutline s1 s3"><span>presečna ura</span></div>
+      ${row('T', '', c('s3 tok', 'prispe po presečni uri') + c('s3', 'velja VEP dneva T+1'))}
+      ${row('T+1', c('s2', 'objava VEP dneva T') + c('s4 pay', ''), c('s3', 'izračun VEP dneva T+1'), ' p')}
+      ${row('T+2', c('s4 pay', ''), c('s3', 'objava VEP dneva T+1'), ' p')}
+      ${row('T+3–6', c('s4 pay', ''), '', ' p')}
+      ${row('T+7', c('s4 pay end', 'izplačilo najpozneje'), '', ' p')}
+    </div><div class="an-legend"><span class="muted">primer z dnevnim obračunskim obdobjem (delovni dnevi)</span></div>`;
+  },
+  set: (fig, k) => {
+    fig.querySelectorAll('.an-cut [class*=" s"], .an-cut [class^="s"]').forEach(el => {
+      const ss = (el.className.match(/\bs\d\b/g) || []).map(x => +x.slice(1)); if (!ss.length) return;
+      el.classList.toggle('on', ss.some(x => k >= x)); el.classList.toggle('hl', ss.includes(k));
+    });
+  },
+  cap: k => [
+    'Izplačilo lahko vlagatelj zahteva **kadarkoli**. Odločilno je, ali zahteva prispe pred ali po **presečni uri** obračunskega dne T.',
+    'Zahteva A prispe **pred presečno uro** → pri izračunu se upošteva **VEP dneva T**.',
+    'VEP dneva T je javno objavljena najkasneje **naslednji delovni dan (T+1)**.',
+    'Zahteva B prispe **po presečni uri** → upošteva se **VEP dneva T+1**, objavljena najkasneje **T+2**.',
+    'Odkupna vrednost = enote × VEP − izstopni stroški. DZU jo izplača **v 7 delovnih dneh po koncu obračunskega obdobja** (če pravila izjemoma ne določajo daljšega roka).',
+    'Obvestilo o obračunu izplačila DZU pošlje **najkasneje naslednji delovni dan** po obračunu.'
+  ][k]
+};
+ANK.trade = {
+  n: () => 5,
+  build: () => `<div class="an-trade">
+      <div class="an-node n-atvp s4"><b>ATVP</b><span>nadzor</span></div>
+      <div class="an-node n-kup s1"><b>Kupec</b><span class="an-pill s1">nakupno naročilo</span><span class="an-pill s3 got">prejme VP</span></div>
+      <div class="an-node n-clk s1 s2"><b>Borzni član</b><span>borzni posrednik vnese naročilo</span></div>
+      <div class="an-node n-bor s2"><b>Trgovalni sistem borze</b><span class="an-pill s2">posel sklenjen</span></div>
+      <div class="an-node n-clp s1 s2"><b>Borzni član</b><span>borzni posrednik vnese naročilo</span></div>
+      <div class="an-node n-pro s1"><b>Prodajalec</b><span class="an-pill s1">prodajno naročilo</span><span class="an-pill s3 got">prejme denar</span></div>
+      <div class="an-node n-kdd s3"><b>KDD · poravnava T+2</b><span>denar → prodajalcu · preknjižba VP → kupcu</span></div>
+    </div>`,
+  set: (fig, k) => {
+    fig.querySelectorAll('.an-trade .an-node').forEach(el => { const ss = (el.className.match(/\bs\d/g) || []).map(x => +x.slice(1)); el.classList.toggle('hl', ss.includes(k)); el.classList.toggle('on', k === 0 || ss.some(s => s <= k)); });
+    fig.querySelectorAll('.an-trade .an-pill').forEach(el => { const s = +el.className.match(/\bs(\d)/)[1]; el.classList.toggle('on', k >= s); });
+  },
+  cap: k => [
+    'Vlagatelj ne trguje na borzi sam: naročila gredo prek **borznih članov**, poravnava prek **KDD**, nadzor izvaja **ATVP**.',
+    'Kupec odda **nakupno**, prodajalec **prodajno naročilo** svojemu borznemu članu (BPD, banka …).',
+    '**Borzni posrednik** (trgovalec) z dovoljenjem ATVP naročilo vnese v **trgovalni sistem borze**, kjer se posel sklene.',
+    'Posel se samodejno prenese v **KDD**: **poravnava T+2** – denar gre prodajalcu, VP se kupcu preknjižijo v delniški knjigi.',
+    '**ATVP** nadzoruje celoten trg: borzo, borzne člane in KDD.'
+  ][k]
+};
+const TAXR = y => y >= 15 ? 0 : y >= 10 ? 15 : y >= 5 ? 20 : 25;
+ANK.taxrate = {
+  n: () => 1, start: 3,
+  build: () => `<div class="an-tax">
+      <label class="an-tl" for="an-yrs">Leta imetništva: <b data-f="y"></b></label>
+      <input id="an-yrs" class="an-range" type="range" min="0" max="20" step="1">
+      <div class="an-band">${[[0, 5, 25], [5, 10, 20], [10, 15, 15], [15, 20, 0]].map(([a, b, r]) => `<span style="flex:${b - a}" data-r="${r}"><b>${r} %</b><em>${a}–${b === 20 ? '' : b} let</em></span>`).join('')}<i class="an-mark"></i></div>
+      <div class="an-big"><b data-f="r"></b><span data-f="t"></span></div>
+    </div>`,
+  set: (fig, k) => {
+    const r = TAXR(k), inp = fig.querySelector('.an-range');
+    if (inp && Number(inp.value) !== k) inp.value = k;
+    fig.querySelector('[data-f="y"]').textContent = k + ' ' + plural(k, 'leto', 'leti', 'leta', 'let');
+    fig.querySelector('[data-f="r"]').textContent = r + ' %';
+    fig.querySelector('[data-f="t"]').textContent = 'davek pri davčni osnovi 1.000 € = ' + nf(1000 * r / 100, 0) + ' €';
+    fig.querySelector('.an-mark').style.left = (k / 20 * 100) + '%';
+    fig.querySelectorAll('.an-band span').forEach(s => s.classList.toggle('on', Number(s.dataset.r) === r));
+  },
+  cap: k => k >= 15 ? 'Po **15 letih** imetništva je dobiček iz kapitala oproščen (0 %). Dividende se obdavčijo s 25 % ne glede na imetništvo.'
+    : 'Stopnja se **znižuje vsakih 5 let** imetništva: 25 % → 20 % (po 5 letih) → 15 % (po 10 letih) → 0 % (po 15 letih). Pred izračunom osnovo zmanjšajo normirani stroški (1 % + 1 %).'
+};
+function animData(fig){ return (SH[S.tl] || []).find(x => x.type === 'anim' && x.kind === fig.dataset.kind); }
+function viewAnim(d){
+  const K = ANK[d.kind]; if (!K) return '';
+  const key = S.tl + ':' + d.kind, n = K.n(d);
+  if (AN[key] === undefined) AN[key] = K.start || 0;
+  const ctl = n > 1 ? `<div class="an-ctl"><button class="btn sm" data-act="anstep" data-d="-1" aria-label="Korak nazaj">←</button>
+      <button class="btn sm primary an-play" data-act="anplay">▶ Predvajaj</button><button class="btn sm" data-act="anstep" data-d="1" aria-label="Korak naprej">→</button>
+      <span class="an-dots" aria-hidden="true">${Array.from({ length:n }, (_, i) => `<i data-i="${i}"></i>`).join('')}</span></div>` : '';
+  return `<figure class="dg an ak-${esc(d.kind)}" data-an="${esc(key)}" data-kind="${esc(d.kind)}" data-step="${AN[key]}"><figcaption>${fmt(d.t)}</figcaption>
+    <div class="an-stage">${K.build(d)}</div><p class="an-cap" aria-live="polite"></p>${ctl}</figure>`;
+}
+function animApply(fig){
+  const K = ANK[fig.dataset.kind], d = animData(fig); if (!K || !d) return;
+  const n = K.n(d), k = Math.max(0, Math.min(Number(fig.dataset.step) || 0, n > 1 ? n - 1 : 99));
+  K.set(fig, k, d);
+  fig.querySelector('.an-cap').innerHTML = fmt(K.cap(k, d));
+  fig.querySelectorAll('.an-dots i').forEach(i => i.classList.toggle('on', Number(i.dataset.i) <= k));
+  const [pv, , nx] = fig.querySelectorAll('.an-ctl .btn');
+  if (pv) { pv.disabled = k === 0; nx.disabled = k === n - 1; }
+}
+function animStep(fig, delta){
+  if (!fig) return false;
+  const n = ANK[fig.dataset.kind].n(animData(fig)), k = Number(fig.dataset.step) + delta;
+  if (k < 0 || k > n - 1) return false;
+  fig.dataset.step = k; AN[fig.dataset.an] = k; animApply(fig); return true;
+}
+function animStop(){
+  if (!ANT) return;
+  clearInterval(ANT.t); const b = ANT.fig.querySelector('.an-play'); if (b) b.textContent = '▶ Predvajaj'; ANT = null;
+}
+function animPlay(fig){
+  if (!fig) return;
+  if (ANT && ANT.fig === fig) { animStop(); return; }
+  animStop();
+  const n = ANK[fig.dataset.kind].n(animData(fig));
+  if (Number(fig.dataset.step) >= n - 1) { fig.dataset.step = 0; AN[fig.dataset.an] = 0; animApply(fig); }
+  ANT = { fig, t: setInterval(() => { if (!fig.isConnected || !animStep(fig, 1) || Number(fig.dataset.step) >= n - 1) animStop(); }, 1700) };
+  fig.querySelector('.an-play').textContent = '❚❚ Ustavi';
+}
+function mountAnims(){ document.querySelectorAll('figure.an').forEach(animApply); }
 
 /* ---------- access: the question bank is AES-GCM encrypted; the key is derived from username + password ---------- */
 let ENC = null, LOGIN = { err:'', busy:false, user:'' };
