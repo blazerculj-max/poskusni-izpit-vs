@@ -274,6 +274,107 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .ai-btns{display:flex;gap:6px}
 .btn.mic.on{background:var(--bad-soft);color:var(--bad);border-color:transparent}
 .ai-note{text-align:center}
+/* study materials */
+.mats{display:grid;gap:12px}
+.mats h2{font-size:1.15rem;margin-bottom:4px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:8px}
+.mtile{font:inherit;color:var(--ink);text-align:left;display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:center;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);cursor:pointer;transition:border-color .15s,background .15s}
+.mtile:hover{border-color:var(--accent);background:var(--soft)}
+.mico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--sel);color:var(--accent)}
+.mico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mtx{display:grid;gap:2px}
+.mtx span{font-size:.82rem;color:var(--muted)}
+.bar-sp{flex:1}
+.center{text-align:center}
+.mat-ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.mm-tg{display:flex;gap:12px}
+.search{font:inherit;font-size:.95rem;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);flex:1 1 240px;min-width:0}
+.search:focus{outline:none;border-color:var(--accent)}
+.lnk{font:inherit;font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--accent);cursor:pointer;white-space:nowrap;margin-left:6px;vertical-align:1px}
+.lnk:hover{border-color:var(--accent)}
+.lnk.sh{padding:0 7px;margin-left:4px}
+.mm{display:grid;gap:16px}
+.mm-root{justify-self:center;display:flex;align-items:center;gap:10px;padding:12px 20px;border-radius:99px;background:var(--ink);color:var(--bg);font-family:var(--f-head);font-weight:800;font-size:1.1rem;text-align:center;box-shadow:0 0 0 6px var(--soft)}
+.mm-root .chip{background:var(--bg);color:var(--ink)}
+.mm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:12px;align-items:start}
+.mm-br{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--bc);border-radius:12px;padding:10px 14px}
+.mm-br summary{cursor:pointer;list-style:none;display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;font-family:var(--f-head);font-weight:800;font-size:1.02rem}
+.mm-br summary::-webkit-details-marker{display:none}
+.mm-br summary::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--bc);flex:none;align-self:center}
+.mm-br[open] summary{margin-bottom:6px}
+.mm-br ul{margin:0;padding-left:16px;border-left:2px solid color-mix(in srgb,var(--bc) 45%,transparent);display:grid;gap:4px;font-size:.92rem}
+.mm-br ul ul{margin-top:4px;border-left-style:dashed}
+.mm-br li{list-style:none;position:relative}
+.mm-br li::before{content:"";position:absolute;left:-16px;top:.8em;width:10px;border-top:2px solid color-mix(in srgb,var(--bc) 45%,transparent)}
+.rz-list{display:grid;gap:12px}
+.rz-g h2{font-size:1.02rem;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rz-rows{display:grid}
+.rz-row{display:grid;grid-template-columns:minmax(120px,190px) 1fr auto;gap:12px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line)}
+.rz-row:first-child{border-top:0}
+.rz-v{font-family:var(--f-mono);font-weight:600;color:var(--accent);font-size:.9rem}
+.rz-t{font-size:.93rem}
+@media (max-width:560px){.rz-row{grid-template-columns:1fr auto}.rz-t{grid-column:1/-1;order:3}}
+.cmp{display:grid;gap:10px}
+.cmp-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cmp-head h2{font-size:1.05rem}
+.tbl-wrap{overflow-x:auto}
+.cmp-t{width:100%;border-collapse:collapse;font-size:.92rem;min-width:420px}
+.cmp-t th,.cmp-t td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.cmp-t thead th{font-family:var(--f-head);font-size:.95rem;background:var(--soft)}
+.cmp-t tbody th{font-weight:600;color:var(--muted);width:24%}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.fc-setup,.fc-done{display:grid;gap:12px}
+.fc-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.fc-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fc-top .linkbtn{margin-left:auto}
+.fc-card{min-height:200px;display:grid;align-content:center;gap:14px;text-align:center;padding:28px clamp(18px,4vw,36px);border-width:2px}
+.fc-card.flipped{border-color:var(--accent)}
+.fc-f{font-family:var(--f-head);font-weight:800;font-size:clamp(1.15rem,3vw,1.45rem);line-height:1.35}
+.fc-card hr{border:0;border-top:1px dashed var(--line);width:60%;margin:0 auto}
+.fc-b{font-size:1.02rem;line-height:1.6}
+.fc-act{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.fc-act .btn{min-width:140px}
+.fc-no{border-color:var(--bad);color:var(--bad)}
+.dg{margin:4px 0 6px;display:grid;gap:10px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.dg figcaption{font-family:var(--f-head);font-weight:800;font-size:.98rem}
+.dg-cap{font-size:.85rem;color:var(--muted)}
+.dg-tree{display:grid;gap:10px}
+.dg-root{justify-self:center;padding:7px 16px;border-radius:99px;background:var(--ink);color:var(--bg);font-weight:700;font-size:.92rem;text-align:center}
+.dg-kids{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:8px}
+.dg-node{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--bc);border-radius:10px;padding:8px 10px;font-size:.88rem}
+.dg-node b{display:block;margin-bottom:4px}
+.dg-node ul{margin:0;padding-left:1.1em;display:grid;gap:2px;color:var(--muted)}
+.dg-flow{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 22px;counter-reset:st}
+.dg-flow li{position:relative;flex:1 1 130px;display:grid;gap:2px;padding:8px 10px;border-radius:10px;background:var(--sel);font-size:.86rem}
+.dg-flow li b{color:var(--accent)}
+.dg-flow li span{color:var(--muted)}
+.dg-flow li:not(:last-child)::after{content:"→";position:absolute;right:-17px;top:50%;transform:translateY(-50%);color:var(--accent);font-weight:700}
+.dg-lanes{display:grid;gap:8px}
+.dg-lane{display:grid;grid-template-columns:minmax(110px,170px) 1fr;gap:10px;align-items:center}
+.dg-ln{font-weight:700;font-size:.86rem}
+.dg-steps{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 20px}
+.dg-steps li{position:relative;display:grid;gap:1px;padding:6px 10px;border-radius:9px;background:var(--card);border:1px solid var(--line);font-size:.82rem}
+.dg-steps li b{font-family:var(--f-mono);color:var(--accent);font-size:.8rem}
+.dg-steps li span{color:var(--muted)}
+.dg-steps li:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:50%;transform:translateY(-50%);color:var(--muted)}
+@media (max-width:560px){.dg-lane{grid-template-columns:1fr}}
+.dg-levels{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.dg-levels li{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:10px;padding:8px 12px;border-radius:9px;border-left:5px solid var(--tc);background:color-mix(in srgb,var(--tc) 12%,var(--card));font-size:.88rem}
+.dg-levels li b{color:var(--tc)}
+.dg-levels .t-ok{--tc:var(--good)} .dg-levels .t-info{--tc:var(--accent)} .dg-levels .t-warn{--tc:var(--warn)} .dg-levels .t-bad{--tc:var(--bad)} .dg-levels .t-muted{--tc:var(--muted)}
+@media (max-width:560px){.dg-levels li{grid-template-columns:1fr;gap:2px}}
+.dg-bars,.dg-stack{display:grid;gap:8px}
+.dg-bar,.dg-srow{display:grid;grid-template-columns:minmax(110px,200px) 1fr auto;gap:10px;align-items:center;font-size:.86rem}
+.dg-srow{grid-template-columns:minmax(110px,200px) 1fr}
+.dg-bt{height:14px;background:var(--line);border-radius:99px;overflow:hidden}
+.dg-bt i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.dg-bv{font-family:var(--f-mono);font-weight:600;white-space:nowrap}
+.dg-bv em{font-style:normal;color:var(--muted);font-weight:400}
+.dg-st{display:flex;height:22px;border-radius:7px;overflow:hidden}
+.dg-st i{display:grid;place-items:center;font-style:normal;font-family:var(--f-mono);font-size:.72rem;color:var(--on-accent)}
+.dg-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--muted)}
+.dg-legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+@media (max-width:560px){.dg-bar{grid-template-columns:1fr auto}.dg-bar .dg-bt{grid-column:1/-1;order:3}.dg-srow{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -324,6 +425,7 @@ let LESSONS = [], LBY = {}, LQ = {};
 let HAS_CLAUDE = false, AI = null, TTS = null, DICT = null, AIOFF = '', AICTL = null, AIBUSY = false;
 let SPEAKING = '', DICTST = 'idle', DICTBASE = '';
 const CHAT = {}, DRAFT = {};
+let MM = {}, SH = {}, RZ = [], CMP = [], FC = [], FCBY = {};
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 function fmtTime(ms){ ms = Math.max(0, ms); const t = Math.ceil(ms / 1000); const m = Math.floor(t / 60), s = t % 60; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); }
@@ -337,7 +439,7 @@ const isExam = () => S.mode === 'exam';
 function plural(n, one, two, few, many){ const m = n % 100; return m === 1 ? one : m === 2 ? two : (m === 3 || m === 4) ? few : many; }
 
 /* ---------- persistence ---------- */
-function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null }; }
+function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null, fc:{} }; }
 function loadP(){
   try {
     const p = JSON.parse(localStorage.getItem(PSTORE));
@@ -348,13 +450,14 @@ function loadP(){
 function saveP(){ try { localStorage.setItem(PSTORE, JSON.stringify(P)); } catch (e) {} }
 function blank(){
   return { phase:'start', mode:'exam', pk:null, ids:[], perm:[], ans:[], flags:[], cur:0,
-           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false, tl:null };
+           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false, tl:null, sk:0, rzq:'', deck:null, di:0, flip:false, fok:0, fbad:0 };
 }
 function load(){
   try {
     const s = JSON.parse(localStorage.getItem(STORE));
     if (!s || !Array.isArray(s.ids)) return null;
     if (s.phase === 'teach' && s.tl && !LBY[s.tl]) s.tl = null;
+    if (s.phase === 'fc' && Array.isArray(s.deck) && !s.deck.every(id => FCBY[id])) s.deck = null;
     if (s.phase === 'run' || s.phase === 'result') {
       if (!s.ids.length || !s.ids.every(id => BY[id])) return null;
       if (!Array.isArray(s.perm) || s.perm.length !== s.ids.length) return null;
@@ -454,6 +557,7 @@ function viewStart(){
   </section>
   <div class="actions"><button class="btn primary lg" data-act="start">Začni izpit</button></div>
   ${viewTeachCard()}
+  ${viewMatsCard()}
   <section class="card modes">
     <div class="mode-head"><div><h2>Vadba po sklopih</h2><p class="muted sm">Brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.</p></div>
       <div class="seg" role="group" aria-label="Število vprašanj v vadbi">${seg.map(([v, t]) => `<button data-act="plen" data-v="${v}" aria-pressed="${P.plen === v}">${t}</button>`).join('')}</div></div>
@@ -687,7 +791,7 @@ function render(){
     if (!LOGIN.busy) { const f = document.getElementById(LOGIN.user ? 'lg-pass' : 'lg-user'); if (f) f.focus(); }
     return;
   }
-  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : S.phase === 'teach' ? (S.tl ? viewLesson() : viewTeachIndex()) : viewStart();
+  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : S.phase === 'teach' ? (S.tl ? viewLesson() : viewTeachIndex()) : S.phase === 'mm' ? viewMM() : S.phase === 'rz' ? viewRZ() : S.phase === 'cmp' ? viewCMP() : S.phase === 'fc' ? viewFC() : viewStart();
 }
 function setAnswer(oi){
   const i = S.cur;
@@ -725,6 +829,14 @@ function bind(){
       case 'aistop': if (AICTL) AICTL.abort(); break;
       case 'speak': speakFor(b.dataset.k); break;
       case 'mic': toggleMic(); break;
+      case 'mat': { const v = b.dataset.v; stopSpeak(); S = Object.assign(blank(), { phase:v, sk: v === 'mm' ? 1 : 0 }); save(); render(); toTop(); } break;
+      case 'msk': S.sk = Number(b.dataset.v); if (S.phase === 'fc') S.deck = null; save(); render(); break;
+      case 'mmall': app.querySelectorAll('.mm-br').forEach(d => { d.open = b.dataset.v === '1'; }); break;
+      case 'fcstart': fcStart(); break;
+      case 'fcflip': S.flip = true; save(); render(); break;
+      case 'fcno': fcAnswer(false); break;
+      case 'fcyes': fcAnswer(true); break;
+      case 'fcend': S.deck = null; save(); render(); toTop(); break;
       case 'logout': logout(); break;
       case 'plen': P.plen = Number(b.dataset.v); saveP(); render(); break;
       case 'resetp': S.resetAsk = true; render(); { const c = app.querySelector('[data-act="resetok"]'); if (c) c.focus(); } break;
@@ -753,13 +865,23 @@ function bind(){
     const f = e.target.elements;
     login(f['lg-user'].value, f['lg-pass'].value);
   });
-  document.addEventListener('input', e => { if (e.target && e.target.id === 'aiq' && S && S.tl) DRAFT[S.tl] = e.target.value; });
+  document.addEventListener('input', e => {
+    if (!e.target || !S) return;
+    if (e.target.id === 'aiq' && S.tl) DRAFT[S.tl] = e.target.value;
+    if (e.target.id === 'rzq') { S.rzq = e.target.value; const box = document.getElementById('rzlist'); if (box) box.innerHTML = rzList(); }
+  });
   document.addEventListener('keydown', e => {
     if (e.target && e.target.id === 'aiq' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
       e.preventDefault(); const f = document.getElementById('aiform'); if (f && f.requestSubmit) f.requestSubmit(); return;
     }
     if (!S || e.metaKey || e.ctrlKey || e.altKey) return;
     if (S.confirm || S.resetAsk) { if (e.key === 'Escape') { S.confirm = false; S.resetAsk = false; render(); } return; }
+    if (S.phase === 'fc' && S.deck && S.di < S.deck.length && !(e.target && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName))) {
+      if (!S.flip && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); S.flip = true; save(); render(); }
+      else if (S.flip && e.key === 'ArrowLeft') { e.preventDefault(); fcAnswer(false); }
+      else if (S.flip && e.key === 'ArrowRight') { e.preventDefault(); fcAnswer(true); }
+      return;
+    }
     if (S.phase !== 'run') return;
     if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
     if (e.key === 'ArrowRight') { move(1); e.preventDefault(); return; }
@@ -836,6 +958,7 @@ function viewLesson(){
     <div class="qmeta"><span class="chip">Sklop ${l.s}</span><span class="muted">${esc(SK[l.s])} · prosojnice ${esc(l.p)}</span>${P.done[l.id] ? '<span class="pill ok">predelano</span>' : ''}</div>
     <h1 class="ltitle">${esc(l.t)}</h1>
     <section class="lsec"><div class="lsec-head"><h3>Razlaga</h3>${speakBtn('r')}</div>${l.r.map(t => `<p>${fmt(t)}</p>`).join('')}</section>
+    ${SH[l.id] ? `<section class="lsec"><h3>${SH[l.id].length > 1 ? 'Sheme' : 'Shema'}</h3>${SH[l.id].map(viewDiagram).join('')}</section>` : ''}
     <section class="lsec notes"><div class="lsec-head"><h3>Zapiski</h3>${speakBtn('z')}</div><ul>${l.z.map(t => `<li>${fmt(t)}</li>`).join('')}</ul></section>
     ${l.pa ? `<section class="lsec traps"><h3>Pasti na izpitu</h3><ul>${l.pa.map(t => `<li>${fmt(t)}</li>`).join('')}</ul></section>` : ''}
     ${l.pr ? `<section class="lsec example"><h3>Primer</h3><p>${fmt(l.pr)}</p></section>` : ''}
@@ -966,6 +1089,135 @@ function initCaps(){
   }, () => {});
 }
 
+/* ---------- study materials (work everywhere, no AI needed) ---------- */
+const BRC = ['var(--accent)', 'var(--accent-2)', 'var(--good)', 'var(--warn)', 'var(--bad)', 'var(--muted)'];
+const STC = ['var(--accent)', 'var(--accent-2)', 'var(--warn)'];
+const ICO = {
+  mm:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="19" r="2"/><path d="M9.6 10.2 5.6 6.4M14.4 10.2l4-3.8M9.6 13.8l-4 3.8M14.4 13.8l4 3.8"/></svg>',
+  rz:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>',
+  cmp:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16M3 9h18"/></svg>',
+  fc:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="3" width="14" height="17" rx="2"/><path d="M4 7v12a2 2 0 0 0 2 2h10"/></svg>'
+};
+const fcKnown = c => (P.fc[c.id] || 0) >= 2;
+function lnk(id, short){ return id && LBY[id] ? `<button class="lnk${short ? ' sh' : ''}" data-act="lesson" data-id="${id}" title="${esc('Lekcija: ' + LBY[id].t)}" aria-label="${esc('Odpri lekcijo: ' + LBY[id].t)}">${short ? '→' : 'lekcija →'}</button>` : ''; }
+function fmtNum(v){ return String(v).replace('.', ','); }
+function viewMatsCard(){
+  if (!RZ.length && !FC.length && !CMP.length && !Object.keys(MM).length) return '';
+  const known = FC.filter(fcKnown).length;
+  const tile = (v, t, d) => `<button class="mtile" data-act="mat" data-v="${v}"><span class="mico">${ICO[v]}</span><span class="mtx"><b>${t}</b><span>${d}</span></span></button>`;
+  return `<section class="card mats">
+    <div><h2>Učna gradiva</h2><p class="muted sm">Za pregled in ponavljanje. Sheme najdeš tudi v lekcijah učitelja.</p></div>
+    <div class="mgrid">
+      ${tile('mm', 'Miselni vzorci', 'Vseh 7 sklopov na enem zaslonu')}
+      ${tile('rz', 'Roki in zneski', RZ.length + ' podatkov z iskanjem')}
+      ${tile('cmp', 'Primerjave', CMP.length + ' tabel »X proti Y«')}
+      ${tile('fc', 'Kartice', FC.length + ' kartic · obvladanih ' + known)}
+    </div>
+  </section>`;
+}
+function matBar(title){
+  return `<header class="bar"><div class="bar-in"><div class="bar-q"><span class="eyebrow">Učna gradiva · </span><b>${title}</b></div><span class="bar-sp"></span><button class="btn" data-act="home">Na začetek</button></div></header>`;
+}
+function skChips(cur, all){
+  const opts = (all ? [[0, 'Vsi']] : []).concat(Object.keys(SK).map(k => [Number(k), 'S' + k]));
+  return `<div class="filters" role="group" aria-label="Sklop">${opts.map(([v, t]) => `<button data-act="msk" data-v="${v}" aria-pressed="${cur === v}"${v ? ` title="${esc(SK[v])}"` : ''}>${t}</button>`).join('')}</div>`;
+}
+/* mind maps */
+function mmList(arr){ return `<ul>${arr.map(n => `<li><span>${fmt(n.n)}</span>${lnk(n.l, true)}${n.c ? mmList(n.c) : ''}</li>`).join('')}</ul>`; }
+function viewMM(){
+  const k = S.sk || 1, root = MM[k];
+  let h = matBar('Miselni vzorci') + `<main class="wrap"><div class="mat-ctl">${skChips(k, false)}<div class="mm-tg"><button class="linkbtn" data-act="mmall" data-v="1">Razširi vse</button><button class="linkbtn" data-act="mmall" data-v="0">Skrči vse</button></div></div>`;
+  if (!root) return h + '<p class="muted">Za ta sklop miselnega vzorca še ni.</p></main>';
+  h += `<div class="mm"><div class="mm-root"><span class="chip">S${k}</span><span>${fmt(root.n)}</span></div>
+    <div class="mm-grid">${(root.c || []).map((b, i) => `<details class="mm-br" open style="--bc:${BRC[i % BRC.length]}"><summary><span class="mm-t">${fmt(b.n)}</span>${lnk(b.l)}</summary>${b.c ? mmList(b.c) : ''}</details>`).join('')}</div></div>`;
+  return h + `<p class="muted sm center">Klik na »lekcija →« odpre razlago v učitelju.</p></main>`;
+}
+/* deadlines and amounts */
+function rzList(){
+  const k = S.sk || 0, q = norm(S.rzq || '').trim();
+  const rows = RZ.filter(r => (!k || r.s === k) && (!q || norm(r.v + ' ' + r.t).includes(q)));
+  if (!rows.length) return '<p class="muted center">Ni zadetkov.</p>';
+  return Object.keys(SK).map(sk => {
+    const g = rows.filter(r => String(r.s) === sk);
+    if (!g.length) return '';
+    return `<section class="card rz-g"><h2><span class="chip">S${sk}</span> ${esc(SK[sk])}</h2><div class="rz-rows">${g.map(r => `<div class="rz-row"><span class="rz-v">${esc(r.v)}</span><span class="rz-t">${fmt(r.t)}</span>${lnk(r.l)}</div>`).join('')}</div></section>`;
+  }).join('');
+}
+function viewRZ(){
+  return matBar('Roki in zneski') + `<main class="wrap"><div class="mat-ctl"><input id="rzq" class="search" type="search" placeholder="Išči, npr. 15.000, VEP, napoved …" aria-label="Iskanje po rokih in zneskih" value="${esc(S.rzq || '')}">${skChips(S.sk || 0, true)}</div><div id="rzlist" class="rz-list">${rzList()}</div></main>`;
+}
+/* comparisons */
+function viewCMP(){
+  const k = S.sk || 0, list = CMP.filter(t => !k || t.s === k);
+  return matBar('Primerjave') + `<main class="wrap"><div class="mat-ctl">${skChips(k, true)}</div>${list.length ? list.map(t => `<section class="card cmp">
+    <div class="cmp-head"><span class="chip">S${t.s}</span><h2>${esc(t.t)}</h2>${lnk(t.l)}</div>
+    <div class="tbl-wrap"><table class="cmp-t"><thead><tr><th scope="col"><span class="sr">Lastnost</span></th>${t.cols.map(c => `<th scope="col">${esc(c)}</th>`).join('')}</tr></thead>
+    <tbody>${t.rows.map(r => `<tr><th scope="row">${esc(r[0])}</th>${r.slice(1).map(c => `<td>${fmt(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`).join('') : '<p class="muted center">Za ta sklop primerjav še ni.</p>'}</main>`;
+}
+/* flashcards */
+function fcPool(){ const k = S.sk || 0; return FC.filter(c => !k || c.s === k); }
+function fcStart(){
+  const pool = fcPool();
+  if (!pool.length) return;
+  const order = mix(pool).sort((a, b) => (P.fc[a.id] || 0) - (P.fc[b.id] || 0));
+  Object.assign(S, { deck: order.slice(0, 20).map(c => c.id), di:0, flip:false, fok:0, fbad:0 });
+  save(); render(); toTop();
+}
+function fcAnswer(ok){
+  const id = S.deck[S.di];
+  if (!id) return;
+  if (ok) { P.fc[id] = (P.fc[id] || 0) + 1; S.fok++; }
+  else { P.fc[id] = 0; S.fbad++; const at = Math.min(S.deck.length, S.di + 4); S.deck.splice(at, 0, id); }
+  saveP(); S.di++; S.flip = false; save(); render();
+}
+function viewFC(){
+  let h = matBar('Kartice') + '<main class="wrap">';
+  if (!S.deck) {
+    const pool = fcPool(), known = pool.filter(fcKnown).length, learning = pool.filter(c => P.fc[c.id] === 0 || P.fc[c.id] === 1).length;
+    return h + `<div class="mat-ctl">${skChips(S.sk || 0, true)}</div>
+      <section class="card fc-setup">
+        <h2>${S.sk ? 'S' + S.sk + ' · ' + esc(SK[S.sk]) : 'Vsi sklopi'}</h2>
+        <div class="tiles fc-stats"><div class="tile"><b>${pool.length}</b><span>kartic</span></div><div class="tile"><b>${known}</b><span>obvladanih (2× znam)</span></div><div class="tile"><b>${learning}</b><span>v učenju</span></div></div>
+        <p class="muted sm">Krog ima do 20 kartic; najprej pridejo tiste, ki jih še ne znaš. Kartica, pri kateri izbereš »Ne znam«, se v istem krogu vrne čez nekaj kartic.</p>
+        <div class="lact"><button class="btn primary lg" data-act="fcstart" ${pool.length ? '' : 'disabled'}>Začni krog</button></div>
+        <p class="muted sm">Bližnjice: preslednica obrne kartico, puščica levo = ne znam, desno = znam.</p>
+      </section></main>`;
+  }
+  if (S.di >= S.deck.length) {
+    return h + `<section class="card fc-done"><h2>Krog končan</h2><p>Znal si <b>${S.fok}</b>, ne znal <b>${S.fbad}</b>-krat.</p>
+      <div class="lact"><button class="btn primary" data-act="fcstart">Nov krog</button><button class="btn" data-act="fcend">Izberi sklop</button></div></section></main>`;
+  }
+  const c = FCBY[S.deck[S.di]];
+  return h + `<div class="fc-top"><span class="chip">S${c.s}</span><span class="muted sm">Kartica ${S.di + 1} / ${S.deck.length} · znam ${S.fok} · ne znam ${S.fbad}</span><button class="linkbtn" data-act="fcend">Končaj krog</button></div>
+    <div class="prog"><div style="width:${S.di / S.deck.length * 100}%"></div></div>
+    <article class="card fc-card${S.flip ? ' flipped' : ''}" aria-live="polite">
+      <p class="fc-f">${fmt(c.f)}</p>
+      ${S.flip ? `<hr><p class="fc-b">${fmt(c.b)}</p>` : ''}
+    </article>
+    <div class="fc-act">${S.flip ? '<button class="btn fc-no" data-act="fcno">✗ Ne znam</button><button class="btn primary fc-yes" data-act="fcyes">✓ Znam</button>' : '<button class="btn primary lg" data-act="fcflip">Pokaži odgovor</button>'}</div>
+  </main>`;
+}
+/* diagrams inside lessons */
+function viewDiagram(d){
+  let body = '';
+  if (d.type === 'tree') {
+    body = `<div class="dg-tree"><div class="dg-root">${fmt(d.root.n)}</div><div class="dg-kids">${(d.root.c || []).map((c, i) => `<div class="dg-node" style="--bc:${BRC[i % BRC.length]}"><b>${fmt(c.n)}</b>${c.c ? `<ul>${c.c.map(x => `<li>${fmt(x.n)}</li>`).join('')}</ul>` : ''}</div>`).join('')}</div></div>`;
+  } else if (d.type === 'flow') {
+    body = `<ol class="dg-flow">${d.steps.map(st => `<li><b>${fmt(st.n)}</b>${st.d ? `<span>${fmt(st.d)}</span>` : ''}</li>`).join('')}</ol>`;
+  } else if (d.type === 'lanes') {
+    body = `<div class="dg-lanes">${d.rows.map(r => `<div class="dg-lane"><div class="dg-ln">${fmt(r.n)}</div><ol class="dg-steps">${r.steps.map(([a, b]) => `<li><b>${fmt(a)}</b><span>${fmt(b)}</span></li>`).join('')}</ol></div>`).join('')}</div>`;
+  } else if (d.type === 'levels') {
+    body = `<ol class="dg-levels">${d.rows.map(r => `<li class="t-${esc(r.tone || 'info')}"><b>${fmt(r.n)}</b><span>${fmt(r.d || '')}</span></li>`).join('')}</ol>`;
+  } else if (d.type === 'bars') {
+    const max = d.max || Math.max(1, ...d.rows.map(r => r[1]));
+    body = `<div class="dg-bars">${d.rows.map(([n, v, note]) => `<div class="dg-bar"><span class="dg-bl">${fmt(n)}</span><span class="dg-bt"><i style="width:${v > 0 ? Math.max(v / max * 100, 1.5) : 0}%"></i></span><span class="dg-bv">${fmtNum(v)}${esc(d.unit || '')}${note ? ` <em>${esc(note)}</em>` : ''}</span></div>`).join('')}</div>`;
+  } else if (d.type === 'stack') {
+    body = `<div class="dg-stack">${d.rows.map(([n, vals]) => `<div class="dg-srow"><span class="dg-bl">${fmt(n)}</span><span class="dg-st">${vals.map((v, i) => `<i style="width:${v}%;background:${STC[i % STC.length]}" title="${esc(d.keys[i] + ' ' + v + ' %')}">${v >= 15 ? v + ' %' : ''}</i>`).join('')}</span></div>`).join('')}
+      <div class="dg-legend">${d.keys.map((k, i) => `<span><i style="background:${STC[i % STC.length]}"></i>${esc(k)}</span>`).join('')}</div></div>`;
+  }
+  return `<figure class="dg"><figcaption>${fmt(d.t)}</figcaption>${body}${d.cap ? `<p class="dg-cap">${fmt(d.cap)}</p>` : ''}</figure>`;
+}
+
 /* ---------- access: the question bank is AES-GCM encrypted; the key is derived from username + password ---------- */
 let ENC = null, LOGIN = { err:'', busy:false, user:'' };
 const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
@@ -986,6 +1238,8 @@ async function openBank(key){
   BANK = data.q.map(prep); BY = {}; BANK.forEach(q => { BY[q.id] = q; });
   LESSONS = Array.isArray(data.l) ? data.l : []; LBY = {}; LQ = {};
   LESSONS.forEach((l, i) => { l.i = i; LBY[l.id] = l; });
+  MM = data.mm || {}; SH = data.sh || {}; RZ = data.rz || []; CMP = data.cmp || []; FC = data.fc || []; FCBY = {};
+  FC.forEach(c => { FCBY[c.id] = c; });
   S = load() || blank();
   if (S.phase === 'run' && isExam() && Date.now() >= S.endsAt) finish(true); else render();
 }
