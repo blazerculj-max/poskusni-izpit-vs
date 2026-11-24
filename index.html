@@ -551,6 +551,50 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .rec-n{font-family:var(--f-mono);font-size:.8rem;color:var(--bad);white-space:nowrap}
 .gtag{font-family:var(--f-mono);font-size:.74rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--warn-soft);color:var(--warn)}
 .gnote{font-size:.9rem;padding:8px 10px;border-radius:8px;background:var(--warn-soft)}
+
+/* ---- plan, readiness, strategy, elimination, pace ---- */
+.plan,.ready{display:grid;gap:10px}
+.plan-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.plan-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.plan-form label{display:grid;gap:4px;font-size:.86rem;font-weight:600}
+.plan-form input,.plan-form select{font:inherit;font-weight:400;padding:9px 10px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);min-height:42px}
+.plan-form input.bad{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad-soft)}
+.plan-steps{list-style:none;margin:0;padding:0;display:grid;gap:6px;counter-reset:ps}
+.plan-st{counter-increment:ps;display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;font:inherit;font-size:.92rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.plan-st::before{content:counter(ps);display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--f-mono);font-size:.78rem;font-weight:600}
+.plan-st:hover{border-color:var(--accent)}
+.plan-st em{font-style:normal;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);white-space:nowrap}
+.plan-warn{font-size:.86rem;padding:8px 10px;border-radius:8px;background:var(--warn-soft);color:var(--ink)}
+.rd-rows{display:grid;gap:7px}
+.rd-row{display:grid;grid-template-columns:minmax(140px,240px) 1fr 54px;grid-template-rows:auto 3px;gap:3px 10px;align-items:center;font-size:.86rem}
+.rd-bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+.rd-bar i{display:block;height:100%;border-radius:99px;transition:width .4s}
+.rd-bar i.ok{background:var(--good)}.rd-bar i.mid{background:var(--warn)}.rd-bar i.low{background:var(--bad)}
+.rd-v{font-family:var(--f-mono);font-weight:600;text-align:right}.rd-v em{font-style:normal;font-weight:400;color:var(--muted);font-size:.78rem}
+.rd-cov{grid-column:2;height:3px;background:color-mix(in srgb,var(--line) 60%,transparent);border-radius:99px;overflow:hidden}
+.rd-cov i{display:block;height:100%;background:var(--accent-2)}
+@media (max-width:560px){.rd-row{grid-template-columns:1fr 54px}.rd-n{grid-column:1/-1}.rd-bar{grid-column:1}.rd-v{grid-column:2;grid-row:2}.rd-cov{grid-column:1}}
+.rd-est{font-size:1rem}
+.okc{color:var(--good)}.badc{color:var(--bad)}.warnc{color:var(--warn)}
+.mk{justify-self:end;align-self:center;font:inherit;font-family:var(--f-mono);font-size:.74rem;font-weight:600;min-width:44px;padding:4px 9px;border-radius:99px;border:1px dashed var(--line);background:transparent;color:var(--muted);cursor:pointer;white-space:nowrap}
+.mk.in{background:var(--good-soft);color:var(--good);border:1px solid transparent}
+.mk.out{background:var(--bad-soft);color:var(--bad);border:1px solid transparent}
+.stmts li.mkrow{grid-template-columns:30px 1fr auto}
+@media (max-width:520px){.stmts li.mkrow{grid-template-columns:30px 1fr}.stmts li.mkrow .mk{grid-column:2;justify-self:start}}
+.opt.elim{opacity:.42}.opt.elim span:last-child{text-decoration:line-through}
+.elimtg{margin-left:0}
+.qmeta .flag+.elimtg{margin-left:8px}
+.prog{position:relative}
+.pace{position:absolute;top:-3px;bottom:-3px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--warn);transition:left .5s linear}
+.pace-t{white-space:nowrap}
+@media (max-width:560px){.pace-t{display:none}}
+.strat{max-width:680px}
+.sg-tips{margin:0;padding-left:20px;display:grid;gap:5px;font-size:.9rem}
+.sg-opts{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px}
+.sg-opts li{padding:7px 10px;border-radius:9px;border:1px solid var(--line);font-size:.9rem;transition:opacity .25s}
+.sg-opts li.elim{opacity:.35;text-decoration:line-through}
+.sg-opts li.cor{border-color:var(--good);background:var(--good-soft);color:var(--good);opacity:1;text-decoration:none}
+.sg-msg{font-weight:600;font-size:.92rem}
 </style>
 </head>
 <body>
@@ -617,7 +661,7 @@ const HOMEBTN = `<button class="btn home" data-act="gohome" aria-label="Na zače
 function plural(n, one, two, few, many){ const m = n % 100; return m === 1 ? one : m === 2 ? two : (m === 3 || m === 4) ? few : many; }
 
 /* ---------- persistence ---------- */
-function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null, fc:{}, dr:{}, rv:{}, days:{} }; }
+function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null, fc:{}, dr:{}, rv:{}, days:{}, plan:null, ex:[], elim:false, strat:false }; }
 /* spaced review: P.rv[id] = [box, dueDay]; a miss (or a lucky guess) goes to box 0 and is due tomorrow,
    each later correct answer moves it up a box (1, 3, 7, 14, 30 days); past the last box it is learned */
 const RV_GAP = [1, 3, 7, 14, 30], DAILY_N = 15;
@@ -685,6 +729,34 @@ function drawExam(){
   });
   return ids;
 }
+function skStats(){
+  const st = {}; Object.keys(SK).forEach(k => { st[k] = { n:0, seen:0, miss:0 }; });
+  BANK.forEach(q => { const c = st[q.s]; if (!c) return; c.n++; if (P.seen[q.id]) c.seen++; if (P.miss[q.id]) c.miss++; });
+  Object.values(st).forEach(c => { c.acc = c.seen >= 5 ? (c.seen - c.miss) / c.seen : null; c.cov = c.n ? c.seen / c.n : 0; });
+  return st;
+}
+/* rough exam forecast: per-sklop share of seen questions whose last answer was right, weighted by the exam quota */
+function forecast(){
+  const st = skStats(), ks = Object.keys(QUOTA);
+  if (ks.some(k => st[k].acc === null)) return { st, est:null };
+  const est = ks.reduce((a, k) => a + QUOTA[k] * st[k].acc, 0);
+  const risky = ks.filter(k => QUOTA[k] * st[k].acc < 1.5);
+  return { st, est, risky };
+}
+const dayOf = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? Math.floor(Date.UTC(+m[1], m[2] - 1, +m[3]) / 864e5) : null; };
+const fmtDay = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); return m ? `${+m[3]}. ${+m[2]}. ${m[1]}` : ''; };
+/* elimination: an option drops out when it contains a statement marked »not in the answer« or leaves out one marked »in the answer« */
+function elimOut(q, oi, marks){
+  if (q.single || !marks) return false;
+  const set = specSet(q.opts[oi], q.st.length);
+  return marks.some((m, k) => (m === 1 && !set.has(k + 1)) || (m === 0 && set.has(k + 1)));
+}
+const qLab = q => q.lab || (q.neg ? ['ne velja', 'velja'] : ['drži', 'ne drži']);
+function markChip(q, m, act, k){
+  const lab = qLab(q), txt = m === 1 ? lab[0] : m === 0 ? lab[1] : '?';
+  return `<button class="mk${m === 1 ? ' in' : m === 0 ? ' out' : ''}" data-act="${act}" data-k="${k}" title="Klikni: ${esc(lab[0])} → ${esc(lab[1])} → ?">${esc(txt)}</button>`;
+}
+const cycle = m => m === undefined || m === null ? 1 : m === 1 ? 0 : null;
 function weakSk(){
   const st = {}; BANK.forEach(q => { const c = st[q.s] = st[q.s] || { n:0, seen:0, miss:0 }; c.n++; if (P.seen[q.id]) c.seen++; if (P.miss[q.id]) c.miss++; });
   const ks = Object.keys(st), rated = ks.filter(k => st[k].seen >= 5);
@@ -730,6 +802,7 @@ function finish(timeout){
       if (ok) delete P.miss[id]; else P.miss[id] = 1;
       schedule(id, ok);
     });
+    { const r = results(); P.ex = (P.ex || []).concat({ d:today(), ok:r.ok, pass:r.pass }).slice(-12); }
     saveP();
   }
   save(); render(); toTop();
@@ -778,7 +851,9 @@ function viewStart(){
     </div>
   </section>
   <div class="actions"><button class="btn primary lg" data-act="start">Začni izpit</button></div>
+  ${viewPlanCard()}
   ${viewDailyCard()}
+  ${viewReadyCard()}
   ${viewTeachCard()}
   ${viewDrillCard()}
   ${viewMatsCard()}
@@ -797,10 +872,10 @@ function viewStart(){
         <span class="m">${missN ? missN + ' ' + plural(missN, 'vprašanje čaka', 'vprašanji čakata', 'vprašanja čakajo', 'vprašanj čaka') + ' na ponovitev' : 'Tu se zberejo vprašanja, ki jih zgrešiš.'}</span>
       </button>
     </div>
-    <div class="reset-row"><button class="linkbtn" data-act="resetp" ${seenAll || missN ? '' : 'disabled'}>Ponastavi napredek</button><button class="linkbtn" data-act="logout">Odjava</button></div>
+    <div class="reset-row">${P.plan && P.plan.skip ? '<button class="linkbtn" data-act="planedit">Nastavi načrt</button>' : ''}<button class="linkbtn" data-act="resetp" ${seenAll || missN ? '' : 'disabled'}>Ponastavi napredek</button><button class="linkbtn" data-act="logout">Odjava</button></div>
   </section>
   <section class="card rules">
-    <h2>Kako poteka</h2>
+    <div class="plan-head"><h2>Kako poteka</h2><button class="btn sm" data-act="strat">Strategija za kombinirana vprašanja</button></div>
     <ul>
       <li>Pri vsakem vprašanju izbereš <b>en odgovor</b>: tistega, ki zajema vse pravilne trditve in nobene napačne.</li>
       <li>Pri vprašanjih z <b>NE velja</b> izbereš trditve, ki ne veljajo.</li>
@@ -817,6 +892,7 @@ function viewStart(){
     <p class="muted">A) 1 in 2 · B) 1, 2 in 3 · C) vse · D) vse razen 4 · E) samo 5 · F) nič od naštetega</p>
   </section>
   </main>`;
+  if (S.strat) h += viewStrat();
   if (S.resetAsk) h += `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="rs-t"><div class="card cf">
     <h3 id="rs-t">Ponastavim napredek?</h3>
     <p>Izbrisani bodo podatki o videnih in zgrešenih vprašanjih ter o predelanih lekcijah. Izpit bo spet najprej izbiral vsa vprašanja enakovredno.</p>
@@ -834,7 +910,7 @@ function viewRun(){
   let right = '';
   if (exam) {
     const rem = S.endsAt - Date.now();
-    right = `<span class="ans-count muted">${answered}/${N}<span class="lbl"> odgovorjenih</span></span>
+    right = `<span class="ans-count muted">${answered}/${N}<span class="lbl"> odgovorjenih</span><span id="pacet" class="pace-t">${paceTxt(answered, N)}</span></span>
     <div id="timer" class="timer ${tclass(rem)}" role="timer" aria-label="Preostali čas">${fmtTime(rem)}</div>
     <button class="btn primary" data-act="submit">Oddaj</button>`;
   } else {
@@ -844,26 +920,28 @@ function viewRun(){
   }
   let h = `<header class="bar"><div class="bar-in">${HOMEBTN}
     <div class="bar-q"><span class="eyebrow">${exam ? 'Vprašanje ' : esc(barLabel()) + ' · '}</span><b>${i + 1}</b><span class="muted"> / ${N}</span></div>
-    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${N}" aria-valuenow="${answered}" aria-label="Odgovorjena vprašanja"><div style="width:${answered / N * 100}%"></div></div>
+    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${N}" aria-valuenow="${answered}" aria-label="Odgovorjena vprašanja"><div style="width:${answered / N * 100}%"></div>${exam ? `<i id="pace" class="pace" style="left:${paceFrac() * 100}%" title="Kje bi bil pri 90 s na vprašanje"></i>` : ''}</div>
     ${right}
   </div></header>
   <main class="wrap">
   <article class="card qcard ${q.single ? 'single' : ''}">
     <div class="qmeta"><span class="chip">Sklop ${q.s}</span><span class="muted">${esc(SK[q.s])}</span>
-      ${exam ? `<button class="flag ${S.flags[i] ? 'on' : ''}" data-act="flag" aria-pressed="${S.flags[i]}">${S.flags[i] ? '★ Označeno za pregled' : '☆ Označi za pregled'}</button>` : ''}</div>
+      ${exam ? `<button class="flag ${S.flags[i] ? 'on' : ''}" data-act="flag" aria-pressed="${S.flags[i]}">${S.flags[i] ? '★ Označeno za pregled' : '☆ Označi za pregled'}</button>` : ''}
+      ${!q.single && !locked ? `<button class="flag elimtg${P.elim ? ' on' : ''}" data-act="elim" aria-pressed="${!!P.elim}" title="Označuj trditve, neustrezni odgovori se prečrtajo">${P.elim ? '✓ Izločanje' : 'Izločanje'}</button>` : ''}</div>
     <h2 class="qtext">${q.q}</h2>`;
   if (!q.single) {
     const lab = q.lab || (q.neg ? ['ne velja', 'velja'] : ['drži', 'ne drži']), truth = new Set(q.truth || []);
     h += `<ol class="stmts">${q.st.map((t, k) => {
       const tag = locked ? `<span class="tag ${truth.has(k + 1) ? 't' : 'f'}">${truth.has(k + 1) ? lab[0] : lab[1]}</span>` : '';
-      return `<li class="${locked ? 'fb' : ''}"><span class="sn">${k + 1}</span><span>${esc(t)}</span>${tag}</li>`;
+      const mk = !locked && P.elim ? markChip(q, ((S.mk || {})[i] || [])[k], 'mark', k) : '';
+      return `<li class="${locked ? 'fb' : mk ? 'mkrow' : ''}"><span class="sn">${k + 1}</span><span>${esc(t)}</span>${tag}${mk}</li>`;
     }).join('')}</ol>`;
   }
   const g = !!(S.guess && S.guess[i]);
   if (exam || !locked) h += `<div class="guessrow"><span class="muted sm">Nisi prepričan?</span><button class="guess" data-act="guess" aria-pressed="${g}" title="Tipka U">${g ? '✓ Ugibam' : 'Ugibam'}</button></div>`;
   h += `<div class="opts" role="radiogroup" aria-label="Odgovori">${perm.map((oi, pos) => {
       const sel = a === oi, o = q.options[oi];
-      const cls = locked ? (o.correct ? ' cor' : sel ? ' wrong' : '') : '';
+      const cls = locked ? (o.correct ? ' cor' : sel ? ' wrong' : '') : (P.elim && elimOut(q, oi, (S.mk || {})[i]) ? ' elim' : '');
       return `<button class="opt${cls}" role="radio" aria-checked="${sel}" data-act="select" data-o="${oi}" ${locked ? 'disabled' : ''}><span class="let">${LET[pos]}</span><span>${esc(o.text)}</span></button>`;
     }).join('')}</div>`;
   if (locked) {
@@ -888,6 +966,14 @@ function viewRun(){
   return h;
 }
 
+/* exam pace: target 90 s per question (40 in 60 minutes) */
+const paceFrac = () => Math.min(1, Math.max(0, (Date.now() - S.startedAt) / DURATION));
+function paceTxt(answered, N){
+  const el = Date.now() - S.startedAt; if (el < 90000) return '';
+  const d = answered - Math.min(N, el / 90000);
+  if (Math.abs(d) < 1) return ' · tempo ✓';
+  return d > 0 ? ` · <b class="okc">+${Math.floor(d)}</b><span class="lbl"> pred tempom</span>` : ` · <b class="warnc">−${Math.ceil(-d)}</b><span class="lbl"> za tempom</span>`;
+}
 function viewMap(){
   const exam = isExam();
   let h = `<section class="card map"><div class="map-head"><h3>Pregled vprašanj</h3>
@@ -1103,7 +1189,7 @@ function askSubmit(){ S.confirm = true; render(); const c = app.querySelector('[
 
 function bind(){
   document.addEventListener('click', e => {
-    if (S && S.peek && e.target.classList && e.target.classList.contains('overlay')) { S.peek = null; render(); return; }
+    if (S && (S.peek || S.strat) && e.target.classList && e.target.classList.contains('overlay')) { S.peek = null; S.strat = null; render(); return; }
     const b = e.target.closest('[data-act]'); if (!b || !app.contains(b) || b.disabled) return;
     switch (b.dataset.act) {
       case 'start': begin('exam'); break;
@@ -1150,6 +1236,18 @@ function bind(){
       case 'guesslate': markGuess(); break;
       case 'peek': S.peek = b.dataset.id; render(); { const c = app.querySelector('[data-act="peekclose"]'); if (c) c.focus(); } break;
       case 'peekclose': S.peek = null; render(); break;
+      case 'plansave': { const d = (document.getElementById('plan-date') || {}).value, m = Number((document.getElementById('plan-min') || {}).value) || 20;
+        if (!dayOf(d)) { const f = document.getElementById('plan-date'); if (f) { f.focus(); f.classList.add('bad'); } break; }
+        P.plan = { date:d, min:m }; saveP(); S.planEdit = false; render(); } break;
+      case 'planskip': P.plan = { skip:1 }; saveP(); S.planEdit = false; render(); break;
+      case 'planedit': S.planEdit = true; if (P.plan && P.plan.skip) P.plan = null; render(); { const f = document.getElementById('plan-date'); if (f) f.focus(); } break;
+      case 'strat': S.strat = { id:stratPick(), marks:[], checked:false }; P.strat = true; saveP(); render(); break;
+      case 'stratmark': { const k = Number(b.dataset.k); S.strat.marks[k] = cycle(S.strat.marks[k]); render(); } break;
+      case 'stratcheck': S.strat.checked = true; render(); break;
+      case 'stratnew': S.strat = { id:stratPick(), marks:[], checked:false }; render(); break;
+      case 'stratclose': S.strat = null; render(); break;
+      case 'elim': P.elim = !P.elim; saveP(); render(); break;
+      case 'mark': { const i = S.cur, k = Number(b.dataset.k); S.mk = S.mk || {}; const a = (S.mk[i] = S.mk[i] || []); a[k] = cycle(a[k]); save(); render(); } break;
       case 'confirm': finish(false); break;
       case 'filter': S.filter = b.dataset.f; save(); render(); break;
     }
@@ -1178,7 +1276,7 @@ function bind(){
       e.preventDefault(); const f = document.getElementById('aiform'); if (f && f.requestSubmit) f.requestSubmit(); return;
     }
     if (!S || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (S.confirm || S.resetAsk || S.leave || S.peek) { if (e.key === 'Escape') { S.confirm = false; S.resetAsk = false; S.leave = false; S.peek = null; render(); } return; }
+    if (S.confirm || S.resetAsk || S.leave || S.peek || S.strat) { if (e.key === 'Escape') { S.confirm = false; S.resetAsk = false; S.leave = false; S.peek = null; S.strat = null; render(); } return; }
     if (S.phase === 'fc' && S.deck && S.di < S.deck.length && !(e.target && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName))) {
       if (!S.flip && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); S.flip = true; save(); render(); }
       else if (S.flip && e.key === 'ArrowLeft') { e.preventDefault(); fcAnswer(false); }
@@ -1210,6 +1308,9 @@ function bind(){
     if (rem <= 0) { finish(true); return; }
     const t = document.getElementById('timer');
     if (t) { t.textContent = fmtTime(rem); t.className = 'timer ' + tclass(rem); }
+    const pm = document.getElementById('pace'), pt = document.getElementById('pacet');
+    if (pm) pm.style.left = paceFrac() * 100 + '%';
+    if (pt) pt.innerHTML = paceTxt(S.ans.filter(x => x !== null).length, S.ids.length);
   }, 500);
 }
 
@@ -1227,6 +1328,82 @@ function openLesson(id){
   stopSpeak();
   S = Object.assign(blank(), { phase:'teach', tl:id }); S.peek = null;
   P.last = id; saveP(); save(); render(); toTop();
+}
+function viewPlanCard(){
+  const pl = P.plan;
+  if (pl && pl.skip && !S.planEdit) return '';
+  if (!pl || !pl.date || S.planEdit) {
+    const mins = [10, 20, 30, 45, 60, 90], cur = (pl && pl.min) || 20;
+    return `<section class="card plan">
+      <h2>Tvoj načrt učenja</h2>
+      <p class="muted sm">Povej, kdaj imaš izpit in koliko časa imaš na dan. Vsak dan ti predlagam, kaj narediti – od lekcij do poskusnih izpitov.</p>
+      <div class="plan-form">
+        <label>Datum izpita<input type="date" id="plan-date" value="${esc((pl && pl.date) || '')}"></label>
+        <label>Čas na dan<select id="plan-min">${mins.map(m => `<option value="${m}"${m === cur ? ' selected' : ''}>${m} min</option>`).join('')}</select></label>
+      </div>
+      <div class="cf-act"><button class="btn" data-act="planskip">Brez načrta</button><button class="btn primary" data-act="plansave">Shrani načrt</button></div>
+    </section>`;
+  }
+  const left = dayOf(pl.date) - today(), m = pl.min || 20;
+  if (left < 0) return `<section class="card plan"><h2>Tvoj načrt</h2><p>Izpit je bil <b>${fmtDay(pl.date)}</b>. Če ga ponavljaš, nastavi nov datum.</p><div class="cf-act"><button class="btn" data-act="planedit">Nastavi nov datum</button></div></section>`;
+  const notDone = LESSONS.filter(l => !P.done[l.id]), nextL = notDone[0];
+  const learnDays = Math.max(1, left - 3), perDay = notDone.length ? Math.ceil(notDone.length / learnDays) : 0;
+  const fitL = Math.max(1, Math.floor((m - 10) / 8)), lDay = Math.min(perDay, fitL);
+  const phase = left <= 3 ? ['Zadnji dnevi', 'poskusni izpiti in ponavljanje'] : notDone.length > LESSONS.length * .4 ? ['Faza 1', 'spoznavanje snovi'] : ['Faza 2', 'utrjevanje in prvi poskusni izpiti'];
+  const steps = [];
+  if (!P.strat) steps.push(['Strategija za kombinirana vprašanja', '2 min', 'strat', '']);
+  steps.push(['Današnja vaja', '≈10 min', 'practice', 'D']);
+  if (nextL && left > 3) steps.push([`${lDay} ${plural(lDay, 'lekcija', 'lekciji', 'lekcije', 'lekcij')} – naslednja: ${nextL.t}`, '≈' + lDay * 8 + ' min', 'lesson', nextL.id]);
+  if (left <= 7 || !notDone.length) steps.push(m >= 60 ? ['Poskusni izpit', '60 min', 'start', ''] : [`Vadba najšibkejšega sklopa (S${weakSk()})`, '≈10 min', 'practice', weakSk()]);
+  const warn = perDay > fitL && left > 3 ? `<p class="plan-warn">Za vse lekcije do izpita bi potreboval okoli ${perDay * 8 + 10} min na dan – ali izberi več časa ali najprej lekcije iz sklopov, kjer ti gre slabše.</p>` : '';
+  return `<section class="card plan">
+    <div class="plan-head"><div><h2>Do izpita še ${left} ${plural(left, 'dan', 'dneva', 'dnevi', 'dni')}</h2><p class="muted sm">${fmtDay(pl.date)} · ${m} min na dan · <span class="pill info">${phase[0]}</span> ${phase[1]}</p></div>
+      <button class="linkbtn" data-act="planedit">Spremeni</button></div>
+    <p class="eyebrow">Danes predlagam</p>
+    <ol class="plan-steps">${steps.map(([t, d, act, v]) => `<li><button class="plan-st" data-act="${act}"${act === 'practice' ? ` data-pk="${esc(v)}"` : act === 'lesson' ? ` data-id="${esc(v)}"` : ''}><span>${esc(t)}</span><em>${d}</em></button></li>`).join('')}</ol>
+    ${warn}
+  </section>`;
+}
+function viewReadyCard(){
+  const f = forecast(), ks = Object.keys(QUOTA), ex = (P.ex || []).slice(-5);
+  const rows = ks.map(k => { const c = f.st[k], a = c.acc;
+    return `<div class="rd-row"><span class="rd-n"><b>S${k}</b> ${esc(SK[k])}</span><span class="rd-bar"><i class="${a === null ? '' : a >= .7 ? 'ok' : a >= .5 ? 'mid' : 'low'}" style="width:${a === null ? 0 : Math.round(a * 100)}%"></i></span><span class="rd-v">${a === null ? '<em>premalo</em>' : Math.round(a * 100) + ' %'}</span><span class="rd-cov" title="videnih vprašanj v sklopu"><i style="width:${Math.round(c.cov * 100)}%"></i></span></div>`; }).join('');
+  const est = f.est === null ? `<p class="muted sm">Za oceno reši vsaj 5 vprašanj v vsakem sklopu (najhitreje z Današnjo vajo ali vadbo po sklopih).</p>`
+    : `<p class="rd-est">Groba ocena: <b>~${Math.round(f.est)} od 40</b> <span class="pill ${f.est >= 26 && !f.risky.length ? 'ok' : f.est >= 24 ? 'info' : 'bad'}">${f.est >= 26 && !f.risky.length ? 'dobro kaže' : f.est >= 24 ? 'na meji' : 'še pod pragom'}</span></p>${f.risky.length ? `<p class="plan-warn">Pazi na ${f.risky.map(k => 'S' + k).join(', ')}: tam je nevarnost, da ostaneš brez pravilnega odgovora (pogoj za opravljen izpit).</p>` : ''}`;
+  return `<section class="card ready">
+    <div class="plan-head"><div><h2>Pripravljenost</h2><p class="muted sm">Delež videnih vprašanj, ki si jih nazadnje rešil pravilno (ugibanja štejejo kot napaka). Tanka črta: koliko sklopa si že videl.</p></div></div>
+    <div class="rd-rows">${rows}</div>
+    ${est}
+    ${ex.length ? `<p class="muted sm">Zadnji poskusni izpiti: ${ex.map(e => `<b class="${e.pass ? 'okc' : 'badc'}">${e.ok}</b>`).join(' · ')} (prag 24)</p>` : ''}
+  </section>`;
+}
+function viewStrat(){
+  const st = S.strat, q = st && BY[st.id]; if (!q) return '';
+  const marks = st.marks || [], all = q.st.every((_, k) => marks[k] === 0 || marks[k] === 1), truth = new Set(q.truth);
+  const left = q.options.map((o, oi) => oi).filter(oi => !elimOut(q, oi, marks));
+  const lab = qLab(q);
+  return `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="sg-t"><div class="card cf peek strat">
+    <h3 id="sg-t">Kako reševati kombinirana vprašanja</h3>
+    <ol class="sg-tips">
+      <li><b>Najprej trditve, potem odgovori.</b> Vsako trditev oceni posebej: ${esc(lab[0])} ali ${esc(lab[1])}.</li>
+      <li><b>Izločaj.</b> Prečrtaj vsak odgovor, ki vsebuje trditev, za katero veš, da ne sodi zraven – ali izpusti trditev, ki zagotovo sodi.</li>
+      <li><b>Pazi na obliko.</b> Pri »NE velja« iščeš trditve, ki ne držijo. »Vse razen 3« pomeni vse trditve brez tretje.</li>
+      <li><b>Tempo.</b> 40 vprašanj v 60 minutah je okoli 90 sekund na vprašanje. Če obtičiš, označi za pregled in pojdi naprej.</li>
+    </ol>
+    <p class="eyebrow">Poskusi: klikni oznako ob vsaki trditvi</p>
+    <p class="qtext sm">${q.q}</p>
+    <ol class="stmts sg-st">${q.st.map((t, k) => `<li class="mkrow"><span class="sn">${k + 1}</span><span>${esc(t)}</span>${st.checked ? `<span class="tag ${truth.has(k + 1) ? 't' : 'f'}">${truth.has(k + 1) ? esc(lab[0]) : esc(lab[1])}</span>` : markChip(q, marks[k], 'stratmark', k)}</li>`).join('')}</ol>
+    <ul class="sg-opts">${q.options.map((o, oi) => `<li class="${elimOut(q, oi, marks) ? 'elim' : ''}${st.checked && o.correct ? ' cor' : ''}">${esc(o.text)}</li>`).join('')}</ul>
+    <p class="sg-msg">${st.checked ? (left.length === 1 && q.options[left[0]].correct ? '✓ Tvoja presoja vodi do pravilnega odgovora.' : 'Primerjaj svoje oznake s pravilnimi – pri kateri trditvi si se zmotil?')
+      : !marks.some(m => m === 0 || m === 1) ? 'Ko označiš trditve, se neustrezni odgovori sami prečrtajo.'
+      : left.length === 0 ? 'Noben odgovor se ne ujema s tvojimi oznakami – ena od oznak je verjetno napačna.'
+      : left.length === 1 ? 'Ostal je en sam odgovor – to bi izbral.' : `Ostalo je še ${left.length} odgovorov. ${all ? '' : 'Označi še preostale trditve.'}`}</p>
+    <div class="cf-act"><button class="btn" data-act="stratnew">Nov primer</button>${st.checked ? '' : '<button class="btn" data-act="stratcheck">Pokaži rešitev</button>'}<button class="btn primary" data-act="stratclose">Zapri</button></div>
+  </div></div>`;
+}
+function stratPick(){
+  const pool = BANK.filter(q => !q.single && !q.lab && !q.neg && q.st.length >= 4 && q.st.length <= 5 && q.opts.length === 6);
+  return pool[Math.floor(Math.random() * pool.length)].id;
 }
 function viewDailyCard(){
   const due = dueIds().length, w = weakSk(), st = streak(), tom = BANK.filter(q => P.rv[q.id] && P.rv[q.id][1] === today() + 1).length;
