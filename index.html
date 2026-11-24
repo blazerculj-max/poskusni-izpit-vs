@@ -595,6 +595,12 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .sg-opts li.elim{opacity:.35;text-decoration:line-through}
 .sg-opts li.cor{border-color:var(--good);background:var(--good-soft);color:var(--good);opacity:1;text-decoration:none}
 .sg-msg{font-weight:600;font-size:.92rem}
+
+/* ---- forget history ---- */
+.rs-list{margin:0;padding-left:20px;display:grid;gap:3px;font-size:.92rem}
+.rs-opt{display:flex;gap:8px;align-items:center;font-size:.92rem}
+.rs-opt input{width:18px;height:18px;accent-color:var(--accent)}
+.notice{padding:10px 14px;border-radius:10px;background:var(--good-soft);color:var(--good);font-weight:600}
 </style>
 </head>
 <body>
@@ -757,6 +763,9 @@ function markChip(q, m, act, k){
   return `<button class="mk${m === 1 ? ' in' : m === 0 ? ' out' : ''}" data-act="${act}" data-k="${k}" title="Klikni: ${esc(lab[0])} → ${esc(lab[1])} → ?">${esc(txt)}</button>`;
 }
 const cycle = m => m === undefined || m === null ? 1 : m === 1 ? 0 : null;
+function hasHistory(){
+  return ['seen', 'miss', 'done', 'fc', 'dr', 'rv', 'days'].some(k => P[k] && Object.keys(P[k]).length) || (P.ex && P.ex.length > 0);
+}
 function weakSk(){
   const st = {}; BANK.forEach(q => { const c = st[q.s] = st[q.s] || { n:0, seen:0, miss:0 }; c.n++; if (P.seen[q.id]) c.seen++; if (P.miss[q.id]) c.miss++; });
   const ks = Object.keys(st), rated = ks.filter(k => st[k].seen >= 5);
@@ -836,6 +845,7 @@ function viewStart(){
   const cnt = {}; BANK.forEach(q => { cnt[q.s] = cnt[q.s] || { n:0, seen:0, miss:0 }; cnt[q.s].n++; if (P.seen[q.id]) cnt[q.s].seen++; if (P.miss[q.id]) cnt[q.s].miss++; });
   const seg = [[10, '10'], [20, '20'], [0, 'vsa']];
   let h = `<main class="wrap">
+  ${S.resetDone ? '<p class="notice" role="status">Zgodovina je izbrisana – začenjaš na novo.</p>' : ''}
   <section class="hero">
     <p class="eyebrow">Izpit za trženje enot vzajemnih skladov · ATVP</p>
     <h1>Poskusni izpit</h1>
@@ -872,7 +882,7 @@ function viewStart(){
         <span class="m">${missN ? missN + ' ' + plural(missN, 'vprašanje čaka', 'vprašanji čakata', 'vprašanja čakajo', 'vprašanj čaka') + ' na ponovitev' : 'Tu se zberejo vprašanja, ki jih zgrešiš.'}</span>
       </button>
     </div>
-    <div class="reset-row">${P.plan && P.plan.skip ? '<button class="linkbtn" data-act="planedit">Nastavi načrt</button>' : ''}<button class="linkbtn" data-act="resetp" ${seenAll || missN ? '' : 'disabled'}>Ponastavi napredek</button><button class="linkbtn" data-act="logout">Odjava</button></div>
+    <div class="reset-row">${P.plan && P.plan.skip ? '<button class="linkbtn" data-act="planedit">Nastavi načrt</button>' : ''}<button class="linkbtn" data-act="resetp" ${hasHistory() ? '' : 'disabled'}>Ponastavi zgodovino</button><button class="linkbtn" data-act="logout">Odjava</button></div>
   </section>
   <section class="card rules">
     <div class="plan-head"><h2>Kako poteka</h2><button class="btn sm" data-act="strat">Strategija za kombinirana vprašanja</button></div>
@@ -894,9 +904,12 @@ function viewStart(){
   </main>`;
   if (S.strat) h += viewStrat();
   if (S.resetAsk) h += `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="rs-t"><div class="card cf">
-    <h3 id="rs-t">Ponastavim napredek?</h3>
-    <p>Izbrisani bodo podatki o videnih in zgrešenih vprašanjih ter o predelanih lekcijah. Izpit bo spet najprej izbiral vsa vprašanja enakovredno.</p>
-    <div class="cf-act"><button class="btn" data-act="cancel">Prekliči</button><button class="btn primary" data-act="resetok">Ponastavi</button></div>
+    <h3 id="rs-t">Pozabim tvojo zgodovino?</h3>
+    <p>Izbrisano bo vse, kar si aplikacija zapomni o tvojem učenju:</p>
+    <ul class="rs-list"><li>videna in zgrešena vprašanja ter ugibanja</li><li>ponavljanje v Današnji vaji in niz dni zapored</li><li>predelane lekcije, kartice in dril</li><li>rezultati poskusnih izpitov in pripravljenost</li></ul>
+    ${P.plan && P.plan.date ? '<label class="rs-opt"><input type="checkbox" id="rs-plan"> Pozabi tudi načrt (datum izpita in čas na dan)</label>' : ''}
+    <p class="muted sm">Izbriše se samo v tem brskalniku. Tega ni mogoče razveljaviti.</p>
+    <div class="cf-act"><button class="btn" data-act="cancel">Prekliči</button><button class="btn danger" data-act="resetok">Izbriši zgodovino</button></div>
   </div></div>`;
   return h;
 }
@@ -1222,7 +1235,9 @@ function bind(){
       case 'logout': logout(); break;
       case 'plen': P.plen = Number(b.dataset.v); saveP(); render(); break;
       case 'resetp': S.resetAsk = true; render(); { const c = app.querySelector('[data-act="resetok"]'); if (c) c.focus(); } break;
-      case 'resetok': P = Object.assign(freshP(), { plen: P.plen }); saveP(); S.resetAsk = false; render(); break;
+      case 'resetok': { const dropPlan = !!(document.getElementById('rs-plan') || {}).checked;
+        P = Object.assign(freshP(), { plen: P.plen, elim: P.elim, plan: dropPlan ? null : P.plan });
+        saveP(); S = blank(); S.resetDone = true; render(); toTop(); S.resetDone = false; save(); } break;   // the notice stays until the next render
       case 'select': setAnswer(Number(b.dataset.o)); break;
       case 'prev': move(-1); break;
       case 'next': move(1); break;
@@ -1371,7 +1386,7 @@ function viewReadyCard(){
   const est = f.est === null ? `<p class="muted sm">Za oceno reši vsaj 5 vprašanj v vsakem sklopu (najhitreje z Današnjo vajo ali vadbo po sklopih).</p>`
     : `<p class="rd-est">Groba ocena: <b>~${Math.round(f.est)} od 40</b> <span class="pill ${f.est >= 26 && !f.risky.length ? 'ok' : f.est >= 24 ? 'info' : 'bad'}">${f.est >= 26 && !f.risky.length ? 'dobro kaže' : f.est >= 24 ? 'na meji' : 'še pod pragom'}</span></p>${f.risky.length ? `<p class="plan-warn">Pazi na ${f.risky.map(k => 'S' + k).join(', ')}: tam je nevarnost, da ostaneš brez pravilnega odgovora (pogoj za opravljen izpit).</p>` : ''}`;
   return `<section class="card ready">
-    <div class="plan-head"><div><h2>Pripravljenost</h2><p class="muted sm">Delež videnih vprašanj, ki si jih nazadnje rešil pravilno (ugibanja štejejo kot napaka). Tanka črta: koliko sklopa si že videl.</p></div></div>
+    <div class="plan-head"><div><h2>Pripravljenost</h2><p class="muted sm">Delež videnih vprašanj, ki si jih nazadnje rešil pravilno (ugibanja štejejo kot napaka). Tanka črta: koliko sklopa si že videl.</p></div>${hasHistory() ? '<button class="btn sm" data-act="resetp">Ponastavi zgodovino</button>' : ''}</div>
     <div class="rd-rows">${rows}</div>
     ${est}
     ${ex.length ? `<p class="muted sm">Zadnji poskusni izpiti: ${ex.map(e => `<b class="${e.pass ? 'okc' : 'badc'}">${e.ok}</b>`).join(' · ')} (prag 24)</p>` : ''}

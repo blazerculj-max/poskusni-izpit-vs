@@ -28,4 +28,4 @@ Za vstop potrebuješ uporabniško ime in geslo, ki ju dobiš pri avtorju.
 
 Vprašanja so v datoteki `questions.enc.json` šifrirana (AES-256-GCM, ključ iz uporabniškega imena in gesla prek PBKDF2). Brez pravilne prijave niso berljiva. Izvorne datoteke vprašanj niso del tega repozitorija.
 
-Napredek (videna in zgrešena vprašanja) se shranjuje samo v brskalniku posamezne naprave.
+Napredek (videna in zgrešena vprašanja, ponavljanje, lekcije, poskusni izpiti) se shranjuje samo v brskalniku posamezne naprave. Z gumbom »Ponastavi zgodovino« (kartica Pripravljenost ali dno vadbe po sklopih) ga lahko izbrišeš; načrt učenja po želji ostane.
