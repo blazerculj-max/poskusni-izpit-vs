@@ -9,6 +9,7 @@ Spletna aplikacija za pripravo na izpit za trženje enot vzajemnih skladov (ATVP
 - **Poskusni izpit:** 40 vprašanj po razporeditvi pravega izpita (8/8/8/4/4/4/4) in 60 minut časa. Najprej se izberejo vprašanja, ki jih še nisi videl. Na koncu dobiš rezultat po sklopih in pregled odgovorov z razlagami.
 - **Vadba po sklopih:** brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.
 - **Zgrešena vprašanja:** napačno odgovorjena vprašanja se shranijo za ponovitev.
+- **Učitelj:** 83 lekcij po vrstnem redu prosojnic (razlaga, zapiski, pasti za izpit, primeri) z vprašanji za preverjanje. V Claude verziji še AI učitelj, ki razlaga, sprašuje in bere na glas.
 
 Banka obsega 356 vprašanj iz gradiv vseh sedmih sklopov, preverjenih ob originalnih gradivih. Večina jih ima najprej oštevilčene trditve, nato kombinirane odgovore (npr. »1, 2 in 4«, »vse razen 3«). Vmes so klasična vprašanja in praktični primeri.
 

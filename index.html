@@ -226,6 +226,54 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .lg-err{min-height:1.4em;color:var(--bad);font-size:.9rem;font-weight:600}
 .lg-form .btn{width:100%}
 .reset-row{gap:16px}
+/* teacher */
+.teach-card{display:grid;gap:12px;border-color:var(--accent)}
+.teach-card h2{font-size:1.15rem;margin-bottom:4px}
+.tprog{display:grid;gap:6px}
+.tprog .m{font-size:.85rem;color:var(--muted)}
+.tsec{display:grid;gap:10px}
+.tsec-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.tsec-head h2{font-size:1.05rem;display:flex;align-items:center;gap:8px}
+.tlist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.tl{font:inherit;color:var(--ink);width:100%;text-align:left;display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);cursor:pointer;transition:border-color .15s}
+.tl:hover{border-color:var(--accent)}
+.tl .tn{font-family:var(--f-mono);font-size:.82rem;font-weight:600;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;background:var(--soft);color:var(--accent)}
+.tl.done .tn{background:var(--good-soft);color:var(--good)}
+.tl .tp{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);white-space:nowrap}
+@media (max-width:520px){.tl{grid-template-columns:30px 1fr}.tl .tp{grid-column:2}}
+.lesson{display:grid;gap:16px}
+.lesson .qmeta .pill{margin-left:auto}
+.ltitle{font-size:clamp(1.4rem,3.6vw,1.9rem);font-weight:800}
+.lsec{display:grid;gap:8px}
+.lsec h3{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lsec-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lsec p{line-height:1.65;max-width:72ch}
+.lsec ul{margin:0;padding-left:1.2em;display:grid;gap:5px}
+.lsec.notes{background:var(--soft);border-radius:11px;padding:12px 14px}
+.lsec.traps{background:var(--warn-soft);border-radius:11px;padding:12px 14px}
+.lsec.traps h3{color:var(--warn)}
+.lsec.example{border:1.5px dashed var(--line);border-radius:11px;padding:12px 14px}
+.lact{display:flex;flex-wrap:wrap;gap:10px}
+.sbtn{font:inherit;font-size:.8rem;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--muted);cursor:pointer;white-space:nowrap}
+.sbtn.on{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.ai{display:grid;gap:12px}
+.ai-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px}
+.ai-head h2{font-size:1.1rem}
+.ai-quick{display:flex;flex-wrap:wrap;gap:6px}
+.chipbtn{font:inherit;font-size:.85rem;font-weight:600;padding:7px 12px;border-radius:99px;border:1px solid var(--accent);background:var(--sel);color:var(--accent);cursor:pointer}
+.chipbtn:disabled{opacity:.5;cursor:default}
+.ai-chat{display:grid;gap:8px}
+.msg{padding:10px 12px;border-radius:12px;max-width:92%;line-height:1.55}
+.msg.me{justify-self:end;background:var(--accent);color:var(--on-accent);white-space:pre-wrap}
+.msg.bot{justify-self:start;background:var(--soft);display:grid;gap:6px}
+.msg.bot .sbtn{justify-self:start}
+.merr{font-size:.82rem;color:var(--bad)}
+.ai-form{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.ai-form textarea{font:inherit;font-size:.95rem;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);resize:vertical;min-height:46px;width:100%}
+.ai-form textarea:focus{outline:none;border-color:var(--accent)}
+.ai-btns{display:flex;gap:6px}
+.btn.mic.on{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.ai-note{text-align:center}
 </style>
 </head>
 <body>
@@ -272,6 +320,10 @@ function prep(q){
 }
 
 let BANK = [], BY = {}, S = null, P = null, app = null;
+let LESSONS = [], LBY = {}, LQ = {};
+let HAS_CLAUDE = false, AI = null, TTS = null, DICT = null, AIOFF = '', AICTL = null, AIBUSY = false;
+let SPEAKING = '', DICTST = 'idle', DICTBASE = '';
+const CHAT = {}, DRAFT = {};
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 function fmtTime(ms){ ms = Math.max(0, ms); const t = Math.ceil(ms / 1000); const m = Math.floor(t / 60), s = t % 60; return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); }
@@ -285,7 +337,7 @@ const isExam = () => S.mode === 'exam';
 function plural(n, one, two, few, many){ const m = n % 100; return m === 1 ? one : m === 2 ? two : (m === 3 || m === 4) ? few : many; }
 
 /* ---------- persistence ---------- */
-function freshP(){ return { seen:{}, miss:{}, plen:20 }; }
+function freshP(){ return { seen:{}, miss:{}, plen:20, done:{}, last:null }; }
 function loadP(){
   try {
     const p = JSON.parse(localStorage.getItem(PSTORE));
@@ -296,13 +348,14 @@ function loadP(){
 function saveP(){ try { localStorage.setItem(PSTORE, JSON.stringify(P)); } catch (e) {} }
 function blank(){
   return { phase:'start', mode:'exam', pk:null, ids:[], perm:[], ans:[], flags:[], cur:0,
-           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false };
+           startedAt:0, endsAt:0, finishedAt:0, timeout:false, confirm:false, filter:'all', resetAsk:false, tl:null };
 }
 function load(){
   try {
     const s = JSON.parse(localStorage.getItem(STORE));
     if (!s || !Array.isArray(s.ids)) return null;
-    if (s.phase !== 'start') {
+    if (s.phase === 'teach' && s.tl && !LBY[s.tl]) s.tl = null;
+    if (s.phase === 'run' || s.phase === 'result') {
       if (!s.ids.length || !s.ids.every(id => BY[id])) return null;
       if (!Array.isArray(s.perm) || s.perm.length !== s.ids.length) return null;
       if (!s.perm.every((p, i) => Array.isArray(p) && p.length === BY[s.ids[i]].options.length)) return null;
@@ -326,6 +379,7 @@ function drawExam(){
   return ids;
 }
 function drawPractice(pk){
+  if (pk && pk.startsWith('L:')) { const l = LBY[pk.slice(2)]; return l ? mix(lessonQs(l)).slice(0, 15).map(q => q.id) : []; }
   if (pk === 'miss') {
     const pool = BANK.filter(q => P.miss[q.id]);
     const list = mix(pool).slice(0, P.plen || pool.length);
@@ -368,7 +422,13 @@ function results(){
   const zero = Object.keys(per).filter(k => per[k].n && per[k].ok === 0);
   return { ok, n, per, zero, pass: isExam() && ok >= PASS && zero.length === 0 };
 }
-function runTitle(){ return isExam() ? 'Poskusni izpit' : S.pk === 'miss' ? 'Vadba · zgrešena vprašanja' : 'Vadba · sklop ' + S.pk; }
+function runTitle(){
+  if (isExam()) return 'Poskusni izpit';
+  if (S.pk === 'miss') return 'Vadba · zgrešena vprašanja';
+  if (S.pk && S.pk.startsWith('L:')) { const l = LBY[S.pk.slice(2)]; return 'Vadba · ' + (l ? l.t : 'lekcija'); }
+  return 'Vadba · sklop ' + S.pk;
+}
+function barLabel(){ return S.pk === 'miss' ? 'Zgrešena' : (S.pk && S.pk.startsWith('L:')) ? 'Lekcija' : 'Vadba S' + S.pk; }
 
 /* ---------- views ---------- */
 function viewStart(){
@@ -393,6 +453,7 @@ function viewStart(){
     </div>
   </section>
   <div class="actions"><button class="btn primary lg" data-act="start">Začni izpit</button></div>
+  ${viewTeachCard()}
   <section class="card modes">
     <div class="mode-head"><div><h2>Vadba po sklopih</h2><p class="muted sm">Brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.</p></div>
       <div class="seg" role="group" aria-label="Število vprašanj v vadbi">${seg.map(([v, t]) => `<button data-act="plen" data-v="${v}" aria-pressed="${P.plen === v}">${t}</button>`).join('')}</div></div>
@@ -430,7 +491,7 @@ function viewStart(){
   </main>`;
   if (S.resetAsk) h += `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="rs-t"><div class="card cf">
     <h3 id="rs-t">Ponastavim napredek?</h3>
-    <p>Izbrisani bodo podatki o videnih in zgrešenih vprašanjih. Izpit bo spet najprej izbiral vsa vprašanja enakovredno.</p>
+    <p>Izbrisani bodo podatki o videnih in zgrešenih vprašanjih ter o predelanih lekcijah. Izpit bo spet najprej izbiral vsa vprašanja enakovredno.</p>
     <div class="cf-act"><button class="btn" data-act="cancel">Prekliči</button><button class="btn primary" data-act="resetok">Ponastavi</button></div>
   </div></div>`;
   return h;
@@ -454,7 +515,7 @@ function viewRun(){
     <button class="btn" data-act="submit">Končaj</button>`;
   }
   let h = `<header class="bar"><div class="bar-in">
-    <div class="bar-q"><span class="eyebrow">${exam ? 'Vprašanje ' : (S.pk === 'miss' ? 'Zgrešena' : 'Vadba S' + esc(S.pk)) + ' · '}</span><b>${i + 1}</b><span class="muted"> / ${N}</span></div>
+    <div class="bar-q"><span class="eyebrow">${exam ? 'Vprašanje ' : esc(barLabel()) + ' · '}</span><b>${i + 1}</b><span class="muted"> / ${N}</span></div>
     <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${N}" aria-valuenow="${answered}" aria-label="Odgovorjena vprašanja"><div style="width:${answered / N * 100}%"></div></div>
     ${right}
   </div></header>
@@ -577,7 +638,7 @@ function viewResult(){
       `<button data-act="filter" data-f="${k}" aria-pressed="${f === k}">${t}</button>`).join('')}</div></div>
     ${items.length ? items.map(viewRev).join('') : '<p class="muted">V tem pogledu ni vprašanj.</p>'}
   </section>
-  <div class="actions">${exam ? '<button class="btn primary lg" data-act="start">Nov poskus</button>' : `<button class="btn primary lg" data-act="practice" data-pk="${esc(S.pk)}">Nova vadba</button>`}<button class="btn lg" data-act="home">Na začetek</button></div>
+  <div class="actions">${exam ? '<button class="btn primary lg" data-act="start">Nov poskus</button>' : `<button class="btn primary lg" data-act="practice" data-pk="${esc(S.pk)}">Nova vadba</button>`}${S.pk && S.pk.startsWith('L:') ? `<button class="btn lg" data-act="lesson" data-id="${esc(S.pk.slice(2))}">Nazaj na lekcijo</button>` : ''}<button class="btn lg" data-act="home">Na začetek</button></div>
   </main>`;
   return h;
 }
@@ -626,7 +687,7 @@ function render(){
     if (!LOGIN.busy) { const f = document.getElementById(LOGIN.user ? 'lg-pass' : 'lg-user'); if (f) f.focus(); }
     return;
   }
-  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : viewStart();
+  app.innerHTML = S.phase === 'run' ? viewRun() : S.phase === 'result' ? viewResult() : S.phase === 'teach' ? (S.tl ? viewLesson() : viewTeachIndex()) : viewStart();
 }
 function setAnswer(oi){
   const i = S.cur;
@@ -654,7 +715,16 @@ function bind(){
     switch (b.dataset.act) {
       case 'start': begin('exam'); break;
       case 'practice': begin('practice', b.dataset.pk); break;
-      case 'home': S = blank(); save(); render(); toTop(); break;
+      case 'home': stopSpeak(); S = blank(); save(); render(); toTop(); break;
+      case 'teach': openLesson(P.last && LBY[P.last] ? P.last : (LESSONS[0] && LESSONS[0].id)); break;
+      case 'tindex': stopSpeak(); S = Object.assign(blank(), { phase:'teach' }); save(); render(); toTop(); break;
+      case 'lesson': if (b.dataset.id) openLesson(b.dataset.id); break;
+      case 'lnext': { const l = LBY[S.tl]; if (l) { P.done[l.id] = 1; saveP(); const n = LESSONS[l.i + 1]; if (n) openLesson(n.id); else { S = Object.assign(blank(), { phase:'teach' }); save(); render(); toTop(); } } } break;
+      case 'ldone': { const id = S.tl; if (id) { if (P.done[id]) delete P.done[id]; else P.done[id] = 1; saveP(); render(); } } break;
+      case 'ai': { const l = LBY[S.tl], qk = QUICK.find(x => x[0] === b.dataset.k); if (l && qk) askAI(l, qk[2], qk[1]); } break;
+      case 'aistop': if (AICTL) AICTL.abort(); break;
+      case 'speak': speakFor(b.dataset.k); break;
+      case 'mic': toggleMic(); break;
       case 'logout': logout(); break;
       case 'plen': P.plen = Number(b.dataset.v); saveP(); render(); break;
       case 'resetp': S.resetAsk = true; render(); { const c = app.querySelector('[data-act="resetok"]'); if (c) c.focus(); } break;
@@ -671,13 +741,23 @@ function bind(){
     }
   });
   document.addEventListener('submit', e => {
+    if (e.target && e.target.id === 'aiform') {
+      e.preventDefault();
+      const ta = document.getElementById('aiq'), v = ta ? ta.value.trim() : '', l = LBY[S && S.tl];
+      if (v && l && !AIBUSY) { DRAFT[l.id] = ''; askAI(l, v, v); }
+      return;
+    }
     if (!e.target || e.target.id !== 'login') return;
     e.preventDefault();
     if (LOGIN.busy) return;
     const f = e.target.elements;
     login(f['lg-user'].value, f['lg-pass'].value);
   });
+  document.addEventListener('input', e => { if (e.target && e.target.id === 'aiq' && S && S.tl) DRAFT[S.tl] = e.target.value; });
   document.addEventListener('keydown', e => {
+    if (e.target && e.target.id === 'aiq' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) {
+      e.preventDefault(); const f = document.getElementById('aiform'); if (f && f.requestSubmit) f.requestSubmit(); return;
+    }
     if (!S || e.metaKey || e.ctrlKey || e.altKey) return;
     if (S.confirm || S.resetAsk) { if (e.key === 'Escape') { S.confirm = false; S.resetAsk = false; render(); } return; }
     if (S.phase !== 'run') return;
@@ -699,6 +779,193 @@ function bind(){
   }, 500);
 }
 
+/* ---------- teacher (lessons in slide order + optional AI teacher inside Claude) ---------- */
+const norm = t => String(t).replace(/ /g, ' ').toLowerCase();
+function qText(q){ return norm(q.q + ' ' + (q.st || []).join(' ') + ' ' + (q.single ? q.opts.join(' ') : '')); }
+function lessonQs(l){
+  if (LQ[l.id]) return LQ[l.id];
+  const kw = (l.kw || []).map(norm);
+  return (LQ[l.id] = BANK.filter(q => q.s === l.s && kw.some(k => qText(q).includes(k))));
+}
+function fmt(t){ return esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>'); }
+function openLesson(id){
+  if (!LBY[id]) return;
+  stopSpeak();
+  S = Object.assign(blank(), { phase:'teach', tl:id });
+  P.last = id; saveP(); save(); render(); toTop();
+}
+function viewTeachCard(){
+  if (!LESSONS.length) return '';
+  const done = LESSONS.filter(l => P.done[l.id]).length, last = P.last && LBY[P.last];
+  return `<section class="card teach-card">
+    <div><h2>Učitelj</h2><p class="muted sm">Pelje te čez vse prosojnice po vrsti: razlaga, zapiski, pasti za izpit in vprašanja za preverjanje.${AI ? ' Snov ti razlaga tudi AI učitelj: odgovarja na vprašanja, te sprašuje in bere na glas.' : ''}</p></div>
+    <div class="tprog"><span class="mini" aria-hidden="true"><i style="width:${done / LESSONS.length * 100}%"></i></span><span class="m">Predelanih ${done} od ${LESSONS.length} lekcij</span></div>
+    <div class="lact"><button class="btn primary" data-act="teach">${last ? 'Nadaljuj: ' + esc(last.t) : 'Začni s prvo lekcijo'}</button><button class="btn" data-act="tindex">Kazalo lekcij</button></div>
+  </section>`;
+}
+function viewTeachIndex(){
+  const done = LESSONS.filter(l => P.done[l.id]).length;
+  let h = `<header class="bar"><div class="bar-in">
+    <div class="bar-q"><span class="eyebrow">Učitelj · </span><b>Kazalo</b></div>
+    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${LESSONS.length}" aria-valuenow="${done}" aria-label="Predelane lekcije"><div style="width:${done / (LESSONS.length || 1) * 100}%"></div></div>
+    <span class="ans-count muted">${done}/${LESSONS.length} predelanih</span>
+    <button class="btn" data-act="home">Na začetek</button>
+  </div></header><main class="wrap">`;
+  Object.keys(SK).forEach(k => {
+    const ls = LESSONS.filter(l => String(l.s) === k);
+    if (!ls.length) return;
+    const d = ls.filter(l => P.done[l.id]).length;
+    h += `<section class="card tsec"><div class="tsec-head"><h2><span class="chip">S${k}</span> ${esc(SK[k])}</h2><span class="muted sm">${d}/${ls.length}</span></div>
+      <ol class="tlist">${ls.map((l, i) => `<li><button class="tl${P.done[l.id] ? ' done' : ''}" data-act="lesson" data-id="${l.id}"><span class="tn">${P.done[l.id] ? '✓' : i + 1}</span><span class="tt">${esc(l.t)}</span><span class="tp">pros. ${esc(l.p)}</span></button></li>`).join('')}</ol></section>`;
+  });
+  return h + `</main>`;
+}
+function speakBtn(key){ return TTS ? `<button class="sbtn${SPEAKING === key ? ' on' : ''}" data-act="speak" data-k="${key}">${SPEAKING === key ? '■ Ustavi' : '🔊 Preberi'}</button>` : ''; }
+function viewLesson(){
+  const l = LBY[S.tl];
+  if (!l) { S.tl = null; return viewTeachIndex(); }
+  const ls = LESSONS.filter(x => x.s === l.s), pos = ls.indexOf(l), qs = lessonQs(l);
+  const prev = LESSONS[l.i - 1], next = LESSONS[l.i + 1];
+  return `<header class="bar"><div class="bar-in">
+    <div class="bar-q"><span class="eyebrow">Učitelj · S${l.s} · </span><b>${pos + 1}</b><span class="muted"> / ${ls.length}</span></div>
+    <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${ls.length}" aria-valuenow="${pos + 1}" aria-label="Lekcija v sklopu"><div style="width:${(pos + 1) / ls.length * 100}%"></div></div>
+    <button class="btn" data-act="tindex">Kazalo</button>
+  </div></header>
+  <main class="wrap">
+  <article class="card lesson">
+    <div class="qmeta"><span class="chip">Sklop ${l.s}</span><span class="muted">${esc(SK[l.s])} · prosojnice ${esc(l.p)}</span>${P.done[l.id] ? '<span class="pill ok">predelano</span>' : ''}</div>
+    <h1 class="ltitle">${esc(l.t)}</h1>
+    <section class="lsec"><div class="lsec-head"><h3>Razlaga</h3>${speakBtn('r')}</div>${l.r.map(t => `<p>${fmt(t)}</p>`).join('')}</section>
+    <section class="lsec notes"><div class="lsec-head"><h3>Zapiski</h3>${speakBtn('z')}</div><ul>${l.z.map(t => `<li>${fmt(t)}</li>`).join('')}</ul></section>
+    ${l.pa ? `<section class="lsec traps"><h3>Pasti na izpitu</h3><ul>${l.pa.map(t => `<li>${fmt(t)}</li>`).join('')}</ul></section>` : ''}
+    ${l.pr ? `<section class="lsec example"><h3>Primer</h3><p>${fmt(l.pr)}</p></section>` : ''}
+    <div class="lact">
+      <button class="btn" data-act="ldone" aria-pressed="${!!P.done[l.id]}">${P.done[l.id] ? '✓ Predelano' : 'Označi kot predelano'}</button>
+      ${qs.length ? `<button class="btn" data-act="practice" data-pk="L:${l.id}">Preveri se · ${Math.min(qs.length, 15)} ${plural(Math.min(qs.length, 15), 'vprašanje', 'vprašanji', 'vprašanja', 'vprašanj')}</button>` : ''}
+    </div>
+  </article>
+  ${viewAI(l)}
+  <div class="navrow">
+    <button class="btn" data-act="lesson" data-id="${prev ? prev.id : ''}" ${prev ? '' : 'disabled'}>← Prejšnja</button>
+    <button class="btn primary" data-act="${next ? 'lnext' : 'tindex'}">${next ? 'Naslednja lekcija →' : 'Na kazalo'}</button>
+  </div>
+  </main>`;
+}
+
+/* AI teacher: sample (answers), tts (read aloud), dictation (ask by voice) – only inside a Claude viewer */
+const QUICK = [
+  ['simple', 'Razloži preprosteje', 'Razloži mi to snov še enkrat, bolj preprosto in s svojimi besedami, kot bi jo razložil začetniku.'],
+  ['example', 'Daj primer iz prakse', 'Daj mi enega ali dva praktična primera iz dela tržnika vzajemnih skladov, ki ponazorita to snov.'],
+  ['quiz', 'Vprašaj me', 'Postavi mi 3 kratka izpitna vprašanja o tej lekciji, brez rešitev. Odgovoril bom v naslednjem sporočilu.'],
+  ['key', 'Kaj je najpomembnejše?', 'Kaj iz te lekcije je najpomembnejše za izpit in kje kandidati najpogosteje naredijo napako?']
+];
+const AIERR = {
+  rate_limited: 'Preveč vprašanj naenkrat ali dosežena omejitev porabe. Poskusi malo kasneje.',
+  session_expired: 'Seja je potekla. Znova se prijavi v Claude.',
+  refused: 'Na to vprašanje učitelj ne more odgovoriti. Vprašaj drugače.',
+  prompt_too_large: 'Pogovor je predolg. Odpri lekcijo znova in začni nov pogovor.',
+  empty_completion: 'Odgovor je bil prazen. Vprašaj drugače.',
+  upstream_error: 'Povezava je bila prekinjena. Poskusi znova.'
+};
+function aiRules(l){
+  return 'Si izkušen in prijazen profesor, ki kandidata pripravlja na izpit ATVP za trženje enot vzajemnih skladov. Vedno odgovarjaj v slovenščini.\n'
+    + 'Pravila:\n'
+    + '- Opiraj se na spodnjo lekcijo, ki povzema uradno gradivo. Rokov, zneskov, odstotkov ali členov, ki jih v lekciji ni, si ne izmišljuj; če kandidat vpraša nekaj, česar lekcija ne pokriva, to jasno povej.\n'
+    + '- Razlagaj preprosto, v kratkih odstavkih, s primeri iz dela tržnika. Odgovor naj ima največ približno 180 besed, razen če kandidat izrecno želi več.\n'
+    + '- Poudarke označi z **dvojnimi zvezdicami**. Ne uporabljaj naslovov, tabel ali emojijev.\n'
+    + '- Ko kandidata sprašuješ, vprašanja oštevilči in ne izdaj rešitev; ko odgovori, vsak odgovor oceni (pravilno, delno ali napačno) in ga na kratko popravi.\n\n'
+    + 'LEKCIJA – sklop ' + l.s + ' (' + SK[l.s] + '): ' + l.t + ', prosojnice ' + l.p + '\n\nRazlaga:\n' + l.r.join('\n\n')
+    + '\n\nZapiski:\n- ' + l.z.join('\n- ')
+    + (l.pa ? '\n\nPasti na izpitu:\n- ' + l.pa.join('\n- ') : '')
+    + (l.pr ? '\n\nPrimer:\n' + l.pr : '');
+}
+function viewAI(l){
+  if (!AI) return HAS_CLAUDE ? '' : '<p class="muted sm ai-note">AI učitelj (razlaga, primeri, spraševanje, branje na glas) je na voljo v Claude verziji aplikacije.</p>';
+  if (AIOFF) return `<p class="muted sm ai-note">${esc(AIOFF)}</p>`;
+  const chat = CHAT[l.id] || [];
+  return `<section class="card ai">
+    <div class="ai-head"><h2>Vprašaj učitelja</h2><span class="muted sm">AI · odgovarja na podlagi te lekcije</span></div>
+    <div class="ai-quick">${QUICK.map(([k, t]) => `<button class="chipbtn" data-act="ai" data-k="${k}" ${AIBUSY ? 'disabled' : ''}>${t}</button>`).join('')}</div>
+    ${chat.length ? `<div class="ai-chat" aria-live="polite">${chat.map((m, i) => m.role === 'user'
+      ? `<div class="msg me">${esc(m.show || m.content)}</div>`
+      : `<div class="msg bot"><div class="mtext" data-bubble="${l.id}-${i}">${m.content ? fmt(m.content) : '<span class="muted">Razmišljam …</span>'}</div>${m.err ? `<p class="merr">${esc(m.err)}</p>` : ''}${m.content && !m.pending ? speakBtn('a' + i) : ''}</div>`).join('')}</div>` : ''}
+    <form class="ai-form" id="aiform">
+      <textarea id="aiq" rows="2" placeholder="Vprašaj karkoli o tej snovi …" aria-label="Vprašanje za učitelja" ${AIBUSY ? 'disabled' : ''}>${esc(DRAFT[l.id] || '')}</textarea>
+      <div class="ai-btns">${DICT ? `<button type="button" class="btn mic${DICTST === 'listening' ? ' on' : ''}" data-act="mic" aria-pressed="${DICTST === 'listening'}" aria-label="Narekuj vprašanje">${DICTST === 'listening' ? '■' : '🎤'}</button>` : ''}${AIBUSY ? '<button type="button" class="btn" data-act="aistop">Ustavi</button>' : '<button type="submit" class="btn primary">Pošlji</button>'}</div>
+    </form>
+  </section>`;
+}
+function scrollChat(){ const c = app.querySelector('.ai-chat'); if (c && c.lastElementChild) c.lastElementChild.scrollIntoView({ block:'nearest' }); }
+async function askAI(l, content, show){
+  if (!AI || AIBUSY) return;
+  const chat = CHAT[l.id] = CHAT[l.id] || [];
+  chat.push({ role:'user', content, show });
+  const bi = chat.length;
+  chat.push({ role:'assistant', content:'', pending:true });
+  AIBUSY = true; render(); scrollChat();
+  const hist = chat.slice(0, -1).filter(m => m.content && !m.err).slice(-12).map(m => ({ role:m.role, content:m.content }));
+  if (hist[0] && hist[0].role === 'assistant') hist.shift();
+  const turns = [{ role:'user', content:aiRules(l) }].concat(hist);
+  const ctl = AICTL = new AbortController();
+  try {
+    const res = await AI(turns, { cache:false, signal:ctl.signal, onText: ({ text }) => {
+      chat[bi].content = text;
+      const el = app.querySelector('[data-bubble="' + l.id + '-' + bi + '"]');
+      if (el) el.innerHTML = fmt(text);
+    } });
+    chat[bi].content = res.text;
+    if (res.truncated) chat[bi].err = 'Odgovor je bil prekinjen. Vprašaj po delih.';
+  } catch (e) {
+    const code = e && e.code;
+    chat[bi].content = (e && e.text) || '';
+    if (['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'].includes(code)) AIOFF = 'AI učitelj v tem pogledu ni na voljo, ker dostop do Claudea ni dovoljen. Lekcije in vprašanja delujejo naprej.';
+    else if (code === 'cancelled') { if (!chat[bi].content) chat[bi].err = 'Ustavljeno.'; }
+    else chat[bi].err = AIERR[code] || 'Odgovora ni bilo mogoče pridobiti. Poskusi znova.';
+  } finally {
+    chat[bi].pending = false; AIBUSY = false; AICTL = null;
+    if (S && S.phase === 'teach') { render(); scrollChat(); }
+  }
+}
+function stopSpeak(){ if (SPEAKING && TTS) { try { TTS.stop(); } catch (e) {} } SPEAKING = ''; }
+function updSpeak(){ app.querySelectorAll('.sbtn').forEach(b => { const on = b.dataset.k === SPEAKING; b.classList.toggle('on', on); b.textContent = on ? '■ Ustavi' : '🔊 Preberi'; }); }
+function speakFor(key){
+  const l = LBY[S && S.tl];
+  if (!TTS || !l) return;
+  if (SPEAKING === key) { stopSpeak(); updSpeak(); return; }
+  let parts = [];
+  if (key === 'r') parts = l.r;
+  else if (key === 'z') parts = l.z;
+  else if (key[0] === 'a') { const m = (CHAT[l.id] || [])[Number(key.slice(1))]; if (m && m.content) parts = m.content.split(/\n{2,}/); }
+  const lines = parts.map(t => String(t).replace(/\*\*/g, '').trim()).filter(Boolean).map(t => ({ text: t.length > 1990 ? t.slice(0, 1990) : t }));
+  if (!lines.length) return;
+  SPEAKING = key; updSpeak();
+  TTS.speak(lines).catch(e => { if (e && e.code === 'not_granted') { TTS = null; render(); } }).finally(() => { if (SPEAKING === key) { SPEAKING = ''; updSpeak(); } });
+}
+function toggleMic(){
+  if (!DICT) return;
+  if (DICTST === 'listening') { DICT.stop().catch(() => {}); return; }
+  const ta = document.getElementById('aiq');
+  DICTBASE = ta ? ta.value.trim() : '';
+  DICT.start().catch(e => { if (e && e.code === 'not_granted') { DICT = null; render(); } });
+}
+function initCaps(){
+  try { HAS_CLAUDE = typeof window !== 'undefined' && !!window.claude && typeof window.claude.use === 'function'; } catch (e) { HAS_CLAUDE = false; }
+  if (!HAS_CLAUDE) return;
+  const rer = () => { if (BANK.length && S && (S.phase === 'teach' || S.phase === 'start') && !AIBUSY) render(); };
+  window.claude.use('sample').then(x => { AI = x || null; rer(); }, () => {});
+  window.claude.use('tts').then(x => { TTS = x || null; rer(); }, () => {});
+  window.claude.use('dictation').then(x => {
+    DICT = x || null;
+    if (DICT) {
+      const join = t => (DICTBASE ? DICTBASE + ' ' : '') + t;
+      DICT.onPartial(({ text }) => { const ta = document.getElementById('aiq'); if (ta) ta.value = join(text); });
+      DICT.onFinal(({ text }) => { DICTBASE = join(text); const ta = document.getElementById('aiq'); if (ta) ta.value = DICTBASE; if (S && S.tl) DRAFT[S.tl] = DICTBASE; });
+      DICT.onState(({ state }) => { DICTST = state; const b = app.querySelector('[data-act="mic"]'); if (b) { b.classList.toggle('on', state === 'listening'); b.textContent = state === 'listening' ? '■' : '🎤'; b.setAttribute('aria-pressed', String(state === 'listening')); } });
+    }
+    rer();
+  }, () => {});
+}
+
 /* ---------- access: the question bank is AES-GCM encrypted; the key is derived from username + password ---------- */
 let ENC = null, LOGIN = { err:'', busy:false, user:'' };
 const b64d = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
@@ -717,6 +984,8 @@ async function openBank(key){
   const buf = await crypto.subtle.decrypt({ name:'AES-GCM', iv:b64d(ENC.iv) }, key, b64d(ENC.data));
   const data = JSON.parse(new TextDecoder().decode(buf));
   BANK = data.q.map(prep); BY = {}; BANK.forEach(q => { BY[q.id] = q; });
+  LESSONS = Array.isArray(data.l) ? data.l : []; LBY = {}; LQ = {};
+  LESSONS.forEach((l, i) => { l.i = i; LBY[l.id] = l; });
   S = load() || blank();
   if (S.phase === 'run' && isExam() && Date.now() >= S.endsAt) finish(true); else render();
 }
@@ -739,6 +1008,7 @@ function init(){
   app.innerHTML = '<main class="wrap"><p class="muted">Nalagam …</p></main>';
   P = loadP();
   bind();
+  initCaps();
   if (!(window.crypto && crypto.subtle)) { app.innerHTML = errorCard('Brskalnik ni podprt', 'Odpri stran v posodobljenem brskalniku (Chrome, Safari, Firefox ali Edge).'); return; }
   loadEnc().then(async enc => {
     ENC = enc;
