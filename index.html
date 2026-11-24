@@ -489,22 +489,24 @@ function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch (
 function prioritized(pool){
   return mix(pool.filter(q => !P.seen[q.id])).concat(mix(pool.filter(q => P.seen[q.id])));
 }
+// twins (same q.g) are two versions of one question: keep only the first one that comes up
+function noTwins(list){ const seen = new Set(); return list.filter(q => !q.g || (!seen.has(q.g) && seen.add(q.g))); }
 function drawExam(){
   const ids = [];
   Object.keys(QUOTA).forEach(k => {
-    const pick = prioritized(BANK.filter(q => String(q.s) === k)).slice(0, QUOTA[k]);
+    const pick = noTwins(prioritized(BANK.filter(q => String(q.s) === k))).slice(0, QUOTA[k]);
     mix(pick).forEach(q => ids.push(q.id));
   });
   return ids;
 }
 function drawPractice(pk){
-  if (pk && pk.startsWith('L:')) { const l = LBY[pk.slice(2)]; return l ? mix(lessonQs(l)).slice(0, 15).map(q => q.id) : []; }
+  if (pk && pk.startsWith('L:')) { const l = LBY[pk.slice(2)]; return l ? noTwins(mix(lessonQs(l))).slice(0, 15).map(q => q.id) : []; }
   if (pk === 'miss') {
     const pool = BANK.filter(q => P.miss[q.id]);
-    const list = mix(pool).slice(0, P.plen || pool.length);
+    const list = noTwins(mix(pool)).slice(0, P.plen || pool.length);
     return list.sort((a, b) => a.s - b.s).map(q => q.id);
   }
-  const list = prioritized(BANK.filter(q => String(q.s) === pk));
+  const list = noTwins(prioritized(BANK.filter(q => String(q.s) === pk)));
   return list.slice(0, P.plen || list.length).map(q => q.id);
 }
 function begin(mode, pk){
