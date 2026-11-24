@@ -9,6 +9,9 @@ Spletna aplikacija za pripravo na izpit za trženje enot vzajemnih skladov (ATVP
 - **Poskusni izpit:** 40 vprašanj po razporeditvi pravega izpita (8/8/8/4/4/4/4) in 60 minut časa. Najprej se izberejo vprašanja, ki jih še nisi videl. Na koncu dobiš rezultat po sklopih in pregled odgovorov z razlagami.
 - **Vadba po sklopih:** brez časovne omejitve. Po vsakem odgovoru takoj vidiš rešitev in pojasnilo.
 - **Na začetno stran:** gumb z ikono hiške je na vsakem zaslonu. Med izpitom pred izhodom vpraša za potrditev; prekinjen izpit ni ocenjen.
+- **Današnja vaja:** 15 vprašanj (okoli 10 minut) – zgrešena vprašanja, ki so spet na vrsti (ponavljanje čez 1, 3, 7, 14 in 30 dni), nekaj iz najšibkejšega sklopa in nova.
+- **Ugibam:** ob vprašanju lahko označiš, da ugibaš; pravilno uganjena vprašanja gredo med zgrešena za ponovitev (tipka U).
+- **Od napake do lekcije:** ob razlagi je povezava na ustrezno lekcijo s kratkim povzetkom, rezultat pa priporoči lekcije, kjer se je nabralo največ napak.
 - **Zgrešena vprašanja:** napačno odgovorjena vprašanja se shranijo za ponovitev.
 - **Učitelj:** 83 lekcij po vrstnem redu prosojnic (razlaga, zapiski, pasti za izpit, primeri) z vprašanji za preverjanje. Osem lekcij ima animirane razlage po korakih ali drsnike (postopno varčevanje, presečna ura in izplačilo, združitev skladov, pot borznega posla, sporočanje Uradu, davčne stopnje po letih, dvojno obdavčenje, trikotnik prevare). V Claude verziji še AI učitelj, ki razlaga, sprašuje in bere na glas.
 - **Dril »drži / ne drži«:** vsaka trditev iz banke posebej, s takojšnjo rešitvijo in pojasnilom; najprej pridejo zgrešene in nevidene trditve.
