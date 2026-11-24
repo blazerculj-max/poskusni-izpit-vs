@@ -372,6 +372,7 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .dg-steps li span{color:var(--muted)}
 .dg-steps li:not(:last-child)::after{content:"→";position:absolute;right:-15px;top:50%;transform:translateY(-50%);color:var(--muted)}
 @media (max-width:560px){.dg-lane{grid-template-columns:1fr}}
+@media (max-width:560px){.dg-flow{flex-direction:column;gap:16px}.dg-flow li{flex:none}.dg-flow li:not(:last-child)::after{content:"↓";right:auto;left:50%;top:auto;bottom:-16px;transform:translateX(-50%)}}
 .dg-levels{list-style:none;margin:0;padding:0;display:grid;gap:5px}
 .dg-levels li{display:grid;grid-template-columns:minmax(120px,190px) 1fr;gap:10px;padding:8px 12px;border-radius:9px;border-left:5px solid var(--tc);background:color-mix(in srgb,var(--tc) 12%,var(--card));font-size:.88rem}
 .dg-levels li b{color:var(--tc)}
@@ -477,6 +478,52 @@ button:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px}
 .an-big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .an-big b{font-family:var(--f-head);font-size:2rem;color:var(--accent);line-height:1}
 .an-big span{color:var(--muted);font-size:.9rem}
+
+/* ---- home button on every bar, leave-exam dialog ---- */
+.btn.home{display:inline-flex;align-items:center;gap:6px;padding:8px 12px}
+.btn.home svg{width:18px;height:18px;flex:none}
+.btn.danger{background:var(--bad);color:var(--on-accent);border-color:transparent}
+@media (max-width:560px){.btn.home{padding:7px 9px}.btn.home .lbl{display:none}}
+.an-rep .an-cb{padding-left:20px}
+@media (max-width:560px){.an-rep .an-cb{padding-left:14px}}
+/* ---- animations, round 2 ---- */
+.an-h em{display:block;font-style:normal;font-weight:400;font-size:.7rem;color:var(--muted)}
+.an-urad{margin-top:4px;padding:8px 10px;border-radius:9px;background:var(--warn-soft);font-size:.86rem;opacity:.3;transition:opacity .3s}
+.an-urad.on{opacity:1}
+.an-tri .an-side{stroke:var(--accent);stroke-width:3;opacity:.12;transition:opacity .4s}
+.an-tri .an-side.on{opacity:1}
+.an-v circle{fill:var(--line);transition:fill .3s}
+.an-v text{font-family:var(--f-head);font-size:19px;font-weight:700;fill:var(--muted);transition:fill .3s}
+.an-v.on circle{fill:var(--accent)}.an-v.on text{fill:var(--ink)}.an-v.hl circle{fill:var(--warn)}
+.an-core text{font-family:var(--f-head);font-size:22px;font-weight:800;fill:var(--bad);opacity:0;transition:opacity .4s}
+.an-core.on text{opacity:1}
+@media (max-width:560px){.an-v text{font-size:22px}.an-core text{font-size:27px}}
+.an-mg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.an-fund{display:grid;place-items:center;align-content:center;gap:2px;min-height:86px;padding:12px 6px;border-radius:12px;border:2px solid var(--accent);background:var(--sel);font-family:var(--f-head);font-size:1.5rem;font-weight:800;color:var(--accent);text-align:center}
+.an-fund em{font-family:var(--f-body);font-style:normal;font-size:.72rem;font-weight:600;color:var(--muted);line-height:1.25}
+.an-fund.fc{opacity:0;border-style:dashed}
+.an-fund .bs,.an-mg.spo .fb .bx{display:none}.an-mg.spo .fb .bs{display:inline}
+.an-mg.pri .fa{animation:mgA1 .9s forwards}.an-mg.pri .fb{animation:mgGrow .9s forwards}
+.an-mg.spo .fa{animation:mgA2 .9s forwards}.an-mg.spo .fb{animation:mgB2 .9s forwards}.an-mg.spo .fc{animation:mgC .9s .35s forwards}
+@keyframes mgA1{to{transform:translateX(calc(100% + 12px)) scale(.5);opacity:0}}
+@keyframes mgA2{to{transform:translateX(calc(200% + 24px)) scale(.5);opacity:0}}
+@keyframes mgB2{to{transform:translateX(calc(100% + 12px)) scale(.5);opacity:0}}
+@keyframes mgGrow{60%{transform:scale(1.12)}to{transform:scale(1.06);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}}
+@keyframes mgC{to{opacity:1;transform:scale(1.06);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}}
+@media (prefers-reduced-motion: reduce){.an-mg.pri .fa,.an-mg.spo .fa,.an-mg.spo .fb{opacity:.25}.an-mg.spo .fc{opacity:1}}
+.an-list{list-style:none;margin:0;padding:0;display:grid;gap:5px;font-size:.86rem}
+.an-list li{display:none;padding:6px 10px;border-radius:8px;background:var(--soft)}
+.an-list li.on{display:block;animation:anIn .4s}
+.an-list li.hl{box-shadow:inset 3px 0 0 var(--accent)}
+@keyframes anIn{from{opacity:0;transform:translateY(4px)}}
+.an-dt{position:relative;display:flex;height:34px;border-radius:8px;background:var(--soft);border:1px solid var(--line)}
+.an-dt i{display:block;height:100%;transition:width .25s}
+.an-dt i:first-child{border-radius:7px 0 0 7px}
+.an-dt .d-for{background:var(--accent-2)}.an-dt .d-si{background:var(--accent)}
+.an-dt .d-ex{background:repeating-linear-gradient(45deg,var(--bad) 0 6px,var(--bad-soft) 6px 12px)}
+.an-dt .d-lim{position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;background:var(--ink);opacity:.75}
+.an-legend .k-for{background:var(--accent-2)}.an-legend .k-si{background:var(--accent)}
+.an-legend .k-ex{background:repeating-linear-gradient(45deg,var(--bad) 0 3px,var(--bad-soft) 3px 6px)}
 </style>
 </head>
 <body>
@@ -539,6 +586,7 @@ function tclass(rem){ return rem < 5 * 60000 ? 'crit' : rem < 10 * 60000 ? 'warn
 function toTop(){ try { window.scrollTo(0, 0); } catch (e) {} }
 const Q = i => BY[S.ids[i]];
 const isExam = () => S.mode === 'exam';
+const HOMEBTN = `<button class="btn home" data-act="gohome" aria-label="Na začetno stran" title="Na začetno stran"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 9.5V20h5v-6h3v6h5V9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="lbl">Začetek</span></button>`;
 function plural(n, one, two, few, many){ const m = n % 100; return m === 1 ? one : m === 2 ? two : (m === 3 || m === 4) ? few : many; }
 
 /* ---------- persistence ---------- */
@@ -733,7 +781,7 @@ function viewRun(){
     right = `<span class="ans-count muted">${ok}/${answered}<span class="lbl"> pravilnih</span></span>
     <button class="btn" data-act="submit">Končaj</button>`;
   }
-  let h = `<header class="bar"><div class="bar-in">
+  let h = `<header class="bar"><div class="bar-in">${HOMEBTN}
     <div class="bar-q"><span class="eyebrow">${exam ? 'Vprašanje ' : esc(barLabel()) + ' · '}</span><b>${i + 1}</b><span class="muted"> / ${N}</span></div>
     <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${N}" aria-valuenow="${answered}" aria-label="Odgovorjena vprašanja"><div style="width:${answered / N * 100}%"></div></div>
     ${right}
@@ -770,6 +818,7 @@ function viewRun(){
   ${viewMap()}
   </main>`;
   if (S.confirm) h += viewConfirm();
+  if (S.leave) h += viewLeave();
   return h;
 }
 
@@ -808,6 +857,13 @@ function viewConfirm(){
   </div></div>`;
 }
 
+function viewLeave(){
+  return `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="lv-t"><div class="card cf">
+    <h3 id="lv-t">Prekineš izpit?</h3>
+    <p>Izpit ne bo ocenjen in odgovori v tem poskusu se ne bodo shranili. Čas medtem teče naprej.</p>
+    <div class="cf-act"><button class="btn" data-act="cancel">Nadaljuj z izpitom</button><button class="btn danger" data-act="leaveok">Prekini in pojdi na začetek</button></div>
+  </div></div>`;
+}
 function viewResult(){
   const exam = isExam(), r = results(), N = S.ids.length;
   const n = r.n || 1;
@@ -828,7 +884,7 @@ function viewResult(){
   } else {
     txt = r.n ? `Pravilno si odgovoril na ${r.ok} od ${r.n} ${plural(r.n, 'vprašanja', 'vprašanj', 'vprašanj', 'vprašanj')}.` : 'Nisi odgovoril na nobeno vprašanje.';
   }
-  let h = `<main class="wrap">
+  let h = `<header class="bar"><div class="bar-in">${HOMEBTN}<div class="bar-q"><span class="eyebrow">${exam ? 'Izpit' : 'Vadba'} · </span><b>Rezultat</b></div><span class="bar-sp"></span></div></header><main class="wrap">
   <section class="card res-hero">
     <div class="ring"><svg viewBox="0 0 120 120" role="img" aria-label="Rezultat ${r.ok} od ${r.n}">
       <circle cx="60" cy="60" r="52" class="r-bg"/>
@@ -974,7 +1030,9 @@ function bind(){
       case 'go': S.cur = Number(b.dataset.q); save(); render(); toTop(); break;
       case 'flag': S.flags[S.cur] = !S.flags[S.cur]; save(); render(); break;
       case 'submit': askSubmit(); break;
-      case 'cancel': S.confirm = false; S.resetAsk = false; render(); break;
+      case 'cancel': S.confirm = false; S.resetAsk = false; S.leave = false; render(); break;
+      case 'gohome': if (S.phase === 'run' && isExam()) { S.leave = true; S.confirm = false; render(); const c = app.querySelector('[data-act="cancel"]'); if (c) c.focus(); } else { stopSpeak(); S = blank(); save(); render(); toTop(); } break;
+      case 'leaveok': S = blank(); save(); render(); toTop(); break;
       case 'confirm': finish(false); break;
       case 'filter': S.filter = b.dataset.f; save(); render(); break;
     }
@@ -1064,10 +1122,9 @@ function viewTeachCard(){
 function viewTeachIndex(){
   const done = LESSONS.filter(l => P.done[l.id]).length;
   let h = `<header class="bar"><div class="bar-in">
-    <div class="bar-q"><span class="eyebrow">Učitelj · </span><b>Kazalo</b></div>
+    ${HOMEBTN}<div class="bar-q"><span class="eyebrow">Učitelj · </span><b>Kazalo</b></div>
     <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${LESSONS.length}" aria-valuenow="${done}" aria-label="Predelane lekcije"><div style="width:${done / (LESSONS.length || 1) * 100}%"></div></div>
     <span class="ans-count muted">${done}/${LESSONS.length}<span class="lbl"> predelanih</span></span>
-    <button class="btn" data-act="home">Na začetek</button>
   </div></header><main class="wrap">`;
   Object.keys(SK).forEach(k => {
     const ls = LESSONS.filter(l => String(l.s) === k);
@@ -1085,7 +1142,7 @@ function viewLesson(){
   const ls = LESSONS.filter(x => x.s === l.s), pos = ls.indexOf(l), qs = lessonQs(l);
   const prev = LESSONS[l.i - 1], next = LESSONS[l.i + 1];
   return `<header class="bar"><div class="bar-in">
-    <div class="bar-q"><span class="eyebrow">Učitelj · S${l.s} · </span><b>${pos + 1}</b><span class="muted"> / ${ls.length}</span></div>
+    ${HOMEBTN}<div class="bar-q"><span class="eyebrow">Učitelj · S${l.s} · </span><b>${pos + 1}</b><span class="muted"> / ${ls.length}</span></div>
     <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${ls.length}" aria-valuenow="${pos + 1}" aria-label="Lekcija v sklopu"><div style="width:${(pos + 1) / ls.length * 100}%"></div></div>
     <button class="btn" data-act="tindex">Kazalo</button>
   </div></header>
@@ -1254,7 +1311,7 @@ function viewMatsCard(){
   </section>`;
 }
 function matBar(title){
-  return `<header class="bar"><div class="bar-in"><div class="bar-q"><span class="eyebrow">Učna gradiva · </span><b>${title}</b></div><span class="bar-sp"></span><button class="btn" data-act="home">Na začetek</button></div></header>`;
+  return `<header class="bar"><div class="bar-in">${HOMEBTN}<div class="bar-q"><span class="eyebrow">Učna gradiva · </span><b>${title}</b></div><span class="bar-sp"></span></div></header>`;
 }
 function skChips(cur, all){
   const opts = (all ? [[0, 'Vsi']] : []).concat(Object.keys(SK).map(k => [Number(k), 'S' + k]));
@@ -1315,7 +1372,7 @@ function viewDrillCard(){
   </section>`;
 }
 function viewDR(){
-  let h = `<header class="bar"><div class="bar-in"><div class="bar-q"><span class="eyebrow">Dril · </span><b>Drži ali ne drži</b></div><span class="bar-sp"></span><button class="btn" data-act="home">Na začetek</button></div></header><main class="wrap">`;
+  let h = `<header class="bar"><div class="bar-in">${HOMEBTN}<div class="bar-q"><span class="eyebrow">Dril · </span><b>Drži ali ne drži</b></div><span class="bar-sp"></span></div></header><main class="wrap">`;
   if (!S.dk) {
     const pool = drPool(), known = pool.filter(drKnown).length, miss = pool.filter(d => P.dr[d.id] === 0).length;
     return h + `<div class="mat-ctl">${skChips(S.sk || 0, true)}</div>
@@ -1574,6 +1631,108 @@ ANK.taxrate = {
   },
   cap: k => k >= 15 ? 'Po **15 letih** imetništva je dobiček iz kapitala oproščen (0 %). Dividende se obdavčijo s 25 % ne glede na imetništvo.'
     : 'Stopnja se **znižuje vsakih 5 let** imetništva: 25 % → 20 % (po 5 letih) → 15 % (po 10 letih) → 0 % (po 15 letih). Pred izračunom osnovo zmanjšajo normirani stroški (1 % + 1 %).'
+};
+/* shared step toggling: every element with classes s1…s9 is 'on' from that step on and 'hl' on exactly that step */
+function stepMarks(fig, k, root){
+  fig.querySelectorAll(root + ' [class*=" s"], ' + root + ' [class^="s"]').forEach(el => {
+    const ss = (el.className.baseVal !== undefined ? el.className.baseVal : el.className).match(/\bs\d\b/g); if (!ss) return;
+    const n = ss.map(x => +x.slice(1)); el.classList.toggle('on', n.some(x => k >= x)); el.classList.toggle('hl', n.includes(k));
+  });
+}
+ANK.report = {
+  n: () => 6,
+  build: () => {
+    const c = (cls, txt) => `<span class="an-chip ${cls}">${txt}</span>`;
+    const row = (day, a, b, extra = '') => `<div class="an-cr${extra}"><span class="an-dl">${day}</span><span class="an-ca">${a}</span><span class="an-cb">${b}</span></div>`;
+    return `<div class="an-cut an-rep">
+      ${row('', '<b class="an-h s1">Gotovina nad 15.000 €<em>dnevi po transakciji</em></b>', '<b class="an-h s2">Sum PD ali FT<em>dnevi po zaznavi razlogov</em></b>', ' hd')}
+      ${row('prej', '', c('s2 tok', 'sporoči PRED izvršitvijo + predvideni rok') + c('s3', 'izjemoma po telefonu'))}
+      ${row('0', c('s1 tok', 'transakcija izvedena') + c('s1 pay', ''), c('s4 pay', ''), ' p')}
+      ${row('+1', c('s1 pay', ''), c('s3', 'še po zaščiteni e-poti') + c('s4 pay', ''), ' p')}
+      ${row('+2', c('s1 pay', ''), c('s4 pay', ''), ' p')}
+      ${row('+3', c('s1 pay end', 'najpozneje sporočeno'), c('s4 pay', ''), ' p')}
+      ${row('+4', '', c('s4 pay', ''), ' p')}
+      ${row('+5', '', c('s4 pay end', 'najpozneje, če prej ni šlo'), ' p')}
+    </div><div class="an-urad s5"><b>Urad</b> lahko transakcijo začasno ustavi za največ <b>3 delovne dni</b>.</div>`;
+  },
+  set: (fig, k) => stepMarks(fig, k, '.an-stage'),
+  cap: k => [
+    'Uradu se sporočajo **gotovinske transakcije nad 15.000 €** (in nakazila nad 15.000 € v visoko tvegane tretje države) ter **vse sumljive transakcije** – ne glede na znesek.',
+    'Gotovinska transakcija nad 15.000 €: sporočiš **takoj, najkasneje v 3 delovnih dneh** po opravljeni transakciji, na predpisanem obrazcu po zaščiteni elektronski poti.',
+    'Sumljivo transakcijo sporočiš **PRED izvršitvijo** in navedeš **rok**, v katerem bo predvidoma izvršena.',
+    'Izjemoma jo lahko predhodno sporočiš **po telefonu** – po zaščiteni elektronski poti pa jo moraš poslati **takoj naslednji delovni dan**.',
+    'Če prej ni bilo mogoče: **takoj oz. najpozneje v 5 delovnih dneh** po zaznavi razlogov. Sporočiš tudi **nameravane** transakcije, tudi če ne bodo izvršene.',
+    'Urad lahko transakcijo **začasno ustavi za največ 3 delovne dni**. Tega stranki ne smeš razkriti (prepoved razkritja).'
+  ][k]
+};
+ANK.fraud = {
+  n: () => 5,
+  build: () => `<svg viewBox="0 0 520 300" class="an-svg an-tri" role="img" aria-label="Trikotnik prevare">
+      <line class="an-side s2" x1="260" y1="52" x2="420" y2="250"/><line class="an-side s3" x1="100" y1="250" x2="420" y2="250"/><line class="an-side s3" x1="100" y1="250" x2="260" y2="52"/>
+      <g class="an-v s1"><circle cx="260" cy="52" r="16"/><text x="260" y="22" text-anchor="middle">Pritisk / motiv</text></g>
+      <g class="an-v s2"><circle cx="420" cy="250" r="16"/><text x="420" y="290" text-anchor="middle">Racionalizacija</text></g>
+      <g class="an-v s3"><circle cx="100" cy="250" r="16"/><text x="100" y="290" text-anchor="middle">Priložnost</text></g>
+      <g class="an-core s4"><text x="260" y="182" text-anchor="middle">neetično</text><text x="260" y="206" text-anchor="middle">ravnanje</text></g>
+    </svg>`,
+  set: (fig, k) => stepMarks(fig, k, '.an-stage'),
+  cap: k => [
+    'Po Cresseyju ljudje ravnamo neetično, ko so hkrati prisotni **trije elementi** – t. i. **trikotnik prevare**.',
+    '**Pritisk / motiv**: potreba po denarju, stiska (npr. plačilo operacije).',
+    '**Racionalizacija**: »to vsi počnejo«, »sem del tima«, »ubogam ukaze«, »če hočeš uspeti, moraš«.',
+    '**Priložnost**: slabe notranje kontrole.',
+    'Vsi trije skupaj so **splošni predpogoj** za neetično ravnanje. V finančni industriji tveganje povečujejo še velike vsote denarja, velika konkurenca in naravnanost k uspehu.'
+  ][k]
+};
+ANK.merge = {
+  n: () => 6,
+  build: () => `<div class="an-mg">
+      <div class="an-fund fa">A<em>prenosni</em></div><div class="an-fund fb">B<em class="bx">prevzemni (obstoječi)</em><em class="bs">prenosni</em></div><div class="an-fund fc">C<em>nov prevzemni sklad</em></div>
+    </div>
+    <ul class="an-list">
+      <li class="s2">imetniki A dobijo enote B po <b>menjalnem razmerju</b>, ki ga določi DZU</li>
+      <li class="s2">imetnikom B se <b>število enot ne spremeni</b>; A preneha <b>brez likvidacije</b></li>
+      <li class="s4">premoženjski položaj imetnikov se <b>ne sme poslabšati</b></li>
+      <li class="s4">mnenje vseh <b>skrbnikov</b>, pregled <b>revizorja</b>, <b>dovoljenje ATVP</b>; stroški bremenijo DZU</li>
+      <li class="s4">med izvedbo so vplačila in izplačila <b>začasno zaustavljena</b></li>
+      <li class="s5">nestrinjajoči imetnik prenosnega sklada: <b>odkup brez izstopnih stroškov</b> ali <b>zamenjava v podoben sklad iste DZU</b></li>
+    </ul>`,
+  set: (fig, k) => {
+    const mg = fig.querySelector('.an-mg');
+    mg.classList.toggle('pri', k === 1 || k === 2); mg.classList.toggle('spo', k >= 3);
+    fig.querySelectorAll('.an-list li').forEach(li => { const s = +li.className.match(/\bs(\d)/)[1]; li.classList.toggle('on', k >= s && !(s === 2 && k >= 3)); li.classList.toggle('hl', k === s); });
+  },
+  cap: k => [
+    'Dva ali več vzajemnih skladov se lahko združi s **pripojitvijo** ali **spojitvijo**. Prevzemni sklad je lahko le eden, prenosnih je lahko več.',
+    '**Pripojitev**: premoženje ter pravice in obveznosti sklada A se prenesejo na **obstoječi** prevzemni sklad B.',
+    'Imetniki A dobijo enote B po menjalnem razmerju; imetnikom B se število enot ne spremeni. Sklad A preneha **brez likvidacijskega postopka**.',
+    '**Spojitev**: skladi A in B se prenesejo na **novoustanovljen** prevzemni sklad C.',
+    'Pogoji za združitev: položaj imetnikov se ne poslabša, mnenje skrbnikov, pregled revizorja in **dovoljenje ATVP**. Med izvedbo sta vplačilo in izplačilo zaustavljena.',
+    'Imetnik prenosnega sklada, ki se ne strinja, lahko zahteva **odkup brez izstopnih stroškov** ali zamenjavo – od prejema obvestila do ustavitve izplačil.'
+  ][k]
+};
+ANK.dtax = {
+  n: () => 1, start: 15,
+  build: () => `<div class="an-tax">
+      <label class="an-tl" for="an-ft">Davek, odtegnjen v tujini: <b data-f="f"></b> (od 1.000 € bruto dividende)</label>
+      <input id="an-ft" class="an-range" type="range" min="0" max="40" step="5">
+      <div class="an-dt"><i class="d-for"></i><i class="d-si"></i><i class="d-ex"></i><span class="d-lim" title="slovenski davek 25 %"></span></div>
+      <div class="an-legend"><span><i class="k-for"></i>tuji davek, ki ga odšteješ</span><span><i class="k-si"></i>doplačilo v Sloveniji</span><span><i class="k-ex"></i>presežek tujega davka (ga ne odšteješ)</span></div>
+      <div class="an-big"><b data-f="d"></b><span data-f="t"></span></div>
+    </div>`,
+  set: (fig, k) => {
+    const f = k * 10, si = 250, odb = Math.min(f, si), dop = Math.max(0, si - f), ex = Math.max(0, f - si), W = 400, inp = fig.querySelector('.an-range');
+    if (inp && Number(inp.value) !== k) inp.value = k;
+    fig.querySelector('[data-f="f"]').textContent = k + ' % = ' + nf(f, 0) + ' €';
+    fig.querySelector('.d-for').style.width = odb / W * 100 + '%';
+    fig.querySelector('.d-si').style.width = dop / W * 100 + '%';
+    fig.querySelector('.d-ex').style.width = ex / W * 100 + '%';
+    fig.querySelector('.d-lim').style.left = si / W * 100 + '%';
+    fig.querySelector('[data-f="d"]').textContent = 'doplačilo ' + nf(dop, 0) + ' €';
+    fig.querySelector('[data-f="t"]').textContent = 'slovenski davek 25 % = 250 € · odbitek tujega davka ' + nf(odb, 0) + ' €';
+  },
+  cap: k => k * 10 > 250
+    ? 'Tuji davek je **višji** od slovenskega: odbitek je omejen na **250 €**, doplačila ni, presežka pa v Sloveniji ne moreš odšteti.'
+    : 'Rezident lahko odšteje davek, plačan v tujini, a **največ do nižjega** od obeh zneskov (plačanega v tujini ali tistega, ki bi ga plačal v Sloveniji). Upoštevajo se mednarodne pogodbe.'
 };
 function animData(fig){ return (SH[S.tl] || []).find(x => x.type === 'anim' && x.kind === fig.dataset.kind); }
 function viewAnim(d){
